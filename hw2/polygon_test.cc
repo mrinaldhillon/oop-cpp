@@ -36,10 +36,14 @@ void PolygonClassTest() {
     cout << endl;
     cout << "Area: " << polygon->GetArea() << endl;
   }
+
+  for (Polygon *polygon : polygons) {
+    delete polygon;
+  }
 }
 
 int main() {
-  PointClassTest();
+  // PointClassTest();
   PolygonClassTest();
   return 0;
 }
