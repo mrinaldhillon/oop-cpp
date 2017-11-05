@@ -1,0 +1,7 @@
+* hw2 requires basic understanding of encapsulation, inheritance and polymorphism
+* Inheritance: Rectangle and Triangle implements Polygon interface.
+* Encapsulation: Points are private attributes, no setter is provided to change dimensions.
+* Polymorhism:
+	Rectangle and Polygon overrides Polygon#GetArea and Polygon#GetPoint.
+		Since Polygon is abstract class with virtual fucntions are we really overriding Polygon's functions?
+	While iterating vector <Polygons *> we don't conditional statements to check the type of polygon.
