@@ -1,7 +1,7 @@
 #ifndef POINT_H
 #define POINT_H
 
-class Point {
+class Point final {
 private:
   double x_, y_;
 

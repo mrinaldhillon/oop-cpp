@@ -1,7 +1,6 @@
-#include <math.h>
 #include "triangle.h"
+#include <math.h>
 
-// This class ingerits from Base and implements fun()
 Triangle::Triangle(const Point& a, const Point& b, const Point& c) {
   a_ = a;
   b_ = b;

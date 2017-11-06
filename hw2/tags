@@ -1,0 +1,39 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.8	//
+CC	makefile	/^CC = g++$/;"	m
+CFLAGS	makefile	/^CFLAGS = -g$/;"	m
+Distance	point.cc	/^double Point::Distance(const Point& from) {$/;"	f	class:Point
+GetArea	rectangle.cc	/^double Rectangle::GetArea() {$/;"	f	class:Rectangle
+GetArea	triangle.cc	/^double Triangle::GetArea() {$/;"	f	class:Triangle
+GetPoints	rectangle.cc	/^vector<Point> Rectangle::GetPoints() {$/;"	f	class:Rectangle
+GetPoints	triangle.cc	/^vector<Point> Triangle::GetPoints() {$/;"	f	class:Triangle
+POINT_H	point.h	2;"	d
+POLYGON_H	polygon.h	2;"	d
+Point	point.cc	/^Point::Point(double x, double y) {$/;"	f	class:Point
+Point	point.h	/^class Point {$/;"	c
+PointClassTest	polygon_test.cc	/^void PointClassTest() {$/;"	f
+Polygon	polygon.h	/^class Polygon {$/;"	c
+PolygonClassTest	polygon_test.cc	/^void PolygonClassTest() {$/;"	f
+RECTANGLE_H	rectangle.h	2;"	d
+Rectangle	rectangle.cc	/^Rectangle::Rectangle(const Point& a, const Point& b, const Point& c,$/;"	f	class:Rectangle
+Rectangle	rectangle.h	/^class Rectangle : public Polygon {$/;"	c
+TRIANGLE_H	triangle.h	2;"	d
+Triangle	triangle.cc	/^Triangle::Triangle(const Point& a, const Point& b, const Point& c) {$/;"	f	class:Triangle
+Triangle	triangle.h	/^class Triangle : public Polygon {$/;"	c
+a_	rectangle.h	/^  Point a_, b_, c_, d_;$/;"	m	class:Rectangle
+a_	triangle.h	/^  Point a_, b_, c_;$/;"	m	class:Triangle
+b_	rectangle.h	/^  Point a_, b_, c_, d_;$/;"	m	class:Rectangle
+b_	triangle.h	/^  Point a_, b_, c_;$/;"	m	class:Triangle
+c_	rectangle.h	/^  Point a_, b_, c_, d_;$/;"	m	class:Rectangle
+c_	triangle.h	/^  Point a_, b_, c_;$/;"	m	class:Triangle
+d_	rectangle.h	/^  Point a_, b_, c_, d_;$/;"	m	class:Rectangle
+main	polygon_test.cc	/^int main() {$/;"	f
+operator =	point.cc	/^Point& Point::operator=(const Point& rhs) {$/;"	f	class:Point
+x	point.cc	/^double Point::x() { return x_; }$/;"	f	class:Point
+x_	point.h	/^  double x_, y_;$/;"	m	class:Point
+y	point.cc	/^double Point::y() { return y_; }$/;"	f	class:Point
+y_	point.h	/^  double x_, y_;$/;"	m	class:Point

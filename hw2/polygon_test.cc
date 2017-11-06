@@ -24,10 +24,7 @@ void PolygonClassTest() {
       new Rectangle(Point(-3, -4), Point(-1, 2), Point(2, 1), Point(0, -5)));
 
   for (Polygon *polygon : polygons) {
-    if (typeid(Triangle) == typeid(*polygon)) {
-      cout << "Triangle:\n";
-    } else
-      cout << "Rectangle:\n";
+    cout << polygon->GetType() << ":\n";
     cout << "Coordinates:";
     vector<Point> points = polygon->GetPoints();
     for (Point point : points) {
@@ -36,7 +33,7 @@ void PolygonClassTest() {
     cout << endl;
     cout << "Area: " << polygon->GetArea() << endl;
   }
-
+  // TODO: is this the best way to deinitialize these objects?
   for (Polygon *polygon : polygons) {
     delete polygon;
   }

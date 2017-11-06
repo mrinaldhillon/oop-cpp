@@ -3,7 +3,6 @@
 #include <iostream>
 using namespace std;
 
-// This class ingerits from Base and implements fun()
 Rectangle::Rectangle(const Point& a, const Point& b, const Point& c,
                      const Point& d) {
   a_ = a;

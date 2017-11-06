@@ -13,8 +13,8 @@ triangle.o:	triangle.h triangle.cc
 	$(CC) $(CFLAGS) -c triangle.cc
 
 PolygonTest:	point.o rectangle.o triangle.o
-	$(CC) $(CFLAGS) point.o rectangle.o triangle.o polygon_test.cc -o polytest
+	$(CC) $(CFLAGS) point.o rectangle.o triangle.o polygon_test.cc -o polygon_test
 
 clean:
 	rm -f *.o *~
-	rm polytest
+	rm -f polygon_test

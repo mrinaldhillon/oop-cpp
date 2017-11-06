@@ -1,0 +1,6 @@
+* Unit test cases using gtest
+* Documentation generation
+* Setup project hierarchy
+*	./src, ./bin, ./lib etc
+* Use cmake
+* Use google library project templete
