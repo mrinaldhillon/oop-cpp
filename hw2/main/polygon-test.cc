@@ -1,17 +1,14 @@
-#include "lib/polygon.h"
 #include <iostream>
 #include <typeinfo>
-#include "lib/point.h"
-#include "lib/rectangle.h"
-#include "lib/triangle.h"
+#include "lib/libpolygon.h"
 
 using namespace std;
 
-void PointClassTest() {
+/*void PointClassTest() {
   Point a(2, 4);
   Point b(4, 6);
   cout << "Distance of a from b = " << a.Distance(b) << endl;
-}
+}*/
 
 void PolygonClassTest() {
   vector<Polygon *> polygons;

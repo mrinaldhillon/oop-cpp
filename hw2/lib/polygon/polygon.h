@@ -3,7 +3,7 @@
 
 #include <string>
 #include <vector>
-#include "point.h"
+#include "lib/point/point.h"
 using namespace std;
 
 class Polygon {
