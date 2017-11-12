@@ -1,9 +1,9 @@
-#include "polygon.h"
+#include "lib/polygon.h"
 #include <iostream>
 #include <typeinfo>
-#include "point.h"
-#include "rectangle.h"
-#include "triangle.h"
+#include "lib/point.h"
+#include "lib/rectangle.h"
+#include "lib/triangle.h"
 
 using namespace std;
 

@@ -25,9 +25,9 @@ double Rectangle::GetArea() {
   double ab = a_.Distance(b_);
   double ac = a_.Distance(c_);
   double ad = a_.Distance(d_);
-  double bc = b_.Distance(c_);
-  double bd = b_.Distance(d_);
-  double cd = c_.Distance(d_);
+//  double bc = b_.Distance(c_);
+//  double bd = b_.Distance(d_);
+//  double cd = c_.Distance(d_);
   double side1 = 0;
   double side2 = 0;
 
