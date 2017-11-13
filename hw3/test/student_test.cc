@@ -1,29 +1,29 @@
 #include <iostream>
 #include <vector>
 #include "lib/libstudent.h"
+using namespace std;
 
-int main() {
-  vector<Student *> students;
+void TestStudent() {
+  Student john(new InState(1000), "jon");
+  Student jane(new OutState(2000), "jane");
+  Student josh(new Intl(3000), "josh");
 
-  Student *jon = new Student(new InState(1000), "jon");
-  Student *jane = new Student(new OutState(2000), "jane");
-  Student *josh = new Student(new Intl(3000), "josh");
-
-  students.push_back(jon);
-  students.push_back(jane);
-  students.push_back(josh);
+  vector<Student *> students{&john, &jane, &josh};
 
   for (Student *student : students) {
     cout << "Student: " << student->GetName()
-         << "\ttution: " << student->GetTution() << "\n";
+         << ", Status: " << student->GetStatus()
+         << ", tution: " << student->GetTution() << "\n";
   }
 
   cout << "Jane qualifies for to be an InState student.. change status!!!\n";
-  jane->SetStatus(new InState(1000));
+  jane.SetStatus(new InState(1000));
   cout << "Student: jane"
-       << "\ttution: " << jane->GetTution() << "\n";
+       << ", Status: " << jane.GetStatus() << ", tution: " << jane.GetTution()
+       << "\n";
+}
 
-  for (Student *student : students) delete student;
-
+int main() {
+  TestStudent();
   return 0;
 }

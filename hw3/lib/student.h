@@ -3,18 +3,18 @@
 
 #include <string>
 #include "lib/student_status.h"
-using namespace std;
 
 class Student final {
  private:
-  string name_;
+  std::string name_;
   const StudentStatus* status_;
 
  public:
-  Student(const StudentStatus* status, const string& name);
+  Student(const StudentStatus* status, const std::string& name);
   ~Student();
-  const string& GetName();
-  float GetTution();
+  const std::string& GetName() const;
+  float GetTution() const;
+  const std::string GetStatus() const;
   void SetStatus(const StudentStatus* status);
 };
 

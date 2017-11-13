@@ -1,0 +1,2 @@
+* if Student constructor accepts pointer to StudentStatus, then implement test for NULL input.
+* StudentStatus& is more desirable, figure how to do this.

@@ -4,10 +4,12 @@
 #include "lib/student_status.h"
 
 class InState final : public StudentStatus {
+ private:
+  const std::string status_ = "InState";
+
  public:
   InState(float tution) : StudentStatus(tution) {}
-  ~InState() = default;
-  float GetTution() const { return tution_; }
+  const std::string& GetStatus() const { return status_; }
 };
 
 #endif  // INSTATE_H
