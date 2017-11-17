@@ -4,12 +4,9 @@
 #include "lib/student_status.h"
 
 class Intl final : public StudentStatus {
- private:
-  const std::string status_ = "International";
-
  public:
-  Intl(float tution) : StudentStatus(tution) {}
-  const std::string& GetStatus() const { return status_; }
+  Intl(float tution) : StudentStatus(tution) { status_ = "International"; }
+  Intl* clone() const { return new Intl(*this); }
 };
 
 #endif  // INTL_H

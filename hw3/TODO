@@ -1,2 +1,4 @@
-* if Student constructor accepts pointer to StudentStatus, then implement test for NULL input.
-* StudentStatus& is more desirable, figure how to do this.
+* Build system bazel create libstudent.so but no corresponding header file is deployed.
+* Remove build directories prefix bazel-*.
+* Unit Test cases using gtest.
+* Update README

@@ -1,5 +1,5 @@
 cc_library(
-	name = "libstudent",
+	name = "student",
 	srcs = glob(["*.cc"]),
 	hdrs = glob(["*.h"]),
 	visibility = ["//test:__pkg__"],

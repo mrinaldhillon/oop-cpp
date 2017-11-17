@@ -4,12 +4,9 @@
 #include "lib/student_status.h"
 
 class OutState final : public StudentStatus {
- private:
-  const std::string status_ = "OutState";
-
  public:
-  OutState(float tution) : StudentStatus(tution) {}
-  const std::string& GetStatus() const { return status_; }
+  OutState(float tution) : StudentStatus(tution) { status_ = "OutState"; }
+  OutState* clone() const { return new OutState(*this); }
 };
 
 #endif  // OUTSTATE_H
