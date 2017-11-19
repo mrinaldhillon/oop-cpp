@@ -1,21 +1,21 @@
 #ifndef STUDENT_H
 #define STUDENT_H
 
+#include <memory>
 #include <string>
 #include "lib/student_status.h"
 
 class Student final {
  private:
   std::string name_;
-  const StudentStatus* status_ = NULL;
+  std::unique_ptr<StudentStatus> status_;
 
  public:
-  Student(const StudentStatus& status, const std::string& name);
-  ~Student();
+  Student(std::unique_ptr<StudentStatus> status, const std::string& name);
   const std::string& GetName() const;
   float GetTution() const;
   const std::string& GetStatus() const;
-  void SetStatus(const StudentStatus& status);
+  void SetStatus(std::unique_ptr<StudentStatus> status);
 };
 
 #endif  // STUDENT_H

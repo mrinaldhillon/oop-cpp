@@ -1,12 +1,14 @@
 #ifndef OUTSTATE_H
 #define OUTSTATE_H
 
+#include <string>
 #include "lib/student_status.h"
 
 class OutState final : public StudentStatus {
  public:
-  OutState(float tution) : StudentStatus(tution) { status_ = "OutState"; }
-  OutState* clone() const { return new OutState(*this); }
+  OutState(float tution);
+  float GetTution() const;
+  const std::string& GetStatus() const;
 };
 
 #endif  // OUTSTATE_H
