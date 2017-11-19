@@ -1,0 +1,4 @@
+-L /home/mrinal/Developer/googletest/bazel-bin
+-lgtest
+-lgtest_main
+-I /home/mrinal/Developer/googletest/googletest/include

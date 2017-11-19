@@ -1,0 +1,11 @@
+Implementing basic unit tests using gtest for Calculator.
+gtest archive is fetch and compiled upon build under ${HOME}/.cache/bazel
+$ bazel build test:calculator-test
+
+Generated test binary
+bazel-bin/test/calculator-test
+
+Run test:
+$ bazel test test:calculator-test --test_output=all
+
+test_output=all option dumps the calculator-test binaries output to stdout
