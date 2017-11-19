@@ -3,13 +3,12 @@
 
 class Point final {
 private:
-  double x_, y_;
+  double x_= 0.0, y_ = 0.0;
 
 public:
   Point(double x = 0.0, double y = 0.0);
   double x();
   double y();
-  Point& operator=(const Point& rhs);
   double Distance(const Point& from);
 };
 

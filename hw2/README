@@ -1,0 +1,9 @@
+* hw2 requires basic understanding of encapsulation, inheritance, polymorphism,
+*	garbage collection and pointer ownership.
+* Inheritance: Rectangle and Triangle implements Polygon interface.
+* Encapsulation: Points are private attributes, no setter is provided to change dimensions.
+* Polymorhism:
+	Rectangle and Polygon overrides Polygon#GetArea and Polygon#GetPoint.
+	While iterating vector<Polygons> there is no need to use conditional statements to check the type of polygon.
+* Since Polygon owns Point objects as private members, used unique_ptr<Point> in Polygon()
+* In test/polygon-test initialized vector<<unique_ptr>Polygon>, this allows for automatic garbage collection.
