@@ -9,13 +9,12 @@
 
 class Rectangle final : public Polygon {
  private:
-  std::unique_ptr<Point> a_, b_, c_, d_;
+  Point a_, b_, c_, d_;
   const std::string type_ = "Rectangle";
 
  public:
-  Rectangle(std::unique_ptr<Point> a, std::unique_ptr<Point> b,
-            std::unique_ptr<Point> c, std::unique_ptr<Point> d);
-  std::vector<std::unique_ptr<Point>> GetPoints() const;
+  Rectangle(Point a, Point b, Point c, Point d);
+  const std::vector<Point> GetPoints() const;
   double GetArea() const;
   // TBD: typeid(self).name() would've produce same result prefixed with class
   // id and but with overhead

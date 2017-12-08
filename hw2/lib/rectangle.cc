@@ -6,31 +6,21 @@
 
 using namespace std;
 
-Rectangle::Rectangle(std::unique_ptr<Point> a, std::unique_ptr<Point> b,
-                     std::unique_ptr<Point> c, std::unique_ptr<Point> d) {
-  a_ = std::move(a);
-  b_ = std::move(b);
-  c_ = std::move(c);
-  d_ = std::move(d);
+Rectangle::Rectangle(Point a, Point b, Point c, Point d) {
+  a_ = a;
+  b_ = b;
+  c_ = c;
+  d_ = d;
 }
 
-vector<std::unique_ptr<Point>> Rectangle::GetPoints() const {
-  vector<unique_ptr<Point>> points;
-  points.push_back(make_unique<Point>(*a_));
-  points.push_back(make_unique<Point>(*b_));
-  points.push_back(make_unique<Point>(*c_));
-  points.push_back(make_unique<Point>(*d_));
-
-  // TODO: findout why following does not work
-  // vector<unique_ptr<Point>> points = {make_unique<Point>(*a_),
-  // make_unique<Point>(*b_), make_unique<Point>(*c_)};
-  return points;
+const std::vector<Point> Rectangle::GetPoints() const {
+  return vector<Point>{a_, b_, c_, d_};
 }
 
 double Rectangle::GetArea() const {
-  double ab = a_->Distance(*b_);
-  double ac = a_->Distance(*c_);
-  double ad = a_->Distance(*d_);
+  double ab = a_.Distance(b_);
+  double ac = a_.Distance(c_);
+  double ad = a_.Distance(d_);
   double side1 = 0;
   double side2 = 0;
 
