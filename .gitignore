@@ -36,3 +36,4 @@ vgcore.*
 bazel-*
 diff
 log
+*.swp

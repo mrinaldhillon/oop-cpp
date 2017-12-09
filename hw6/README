@@ -1,0 +1,5 @@
+* HW6 is an exercise to understand basics of exception handling, shared pointers and 
+*	concept of TestFixtures in unit testing.
+* Using lcov and genhtml for to generate code coverage report.
+*	code coverage index.html is generated in directory bazel-testlogs/test/account-test/
+* $ sh build.sh # build, test and generate code coverage.
