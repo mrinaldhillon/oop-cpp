@@ -1,11 +1,12 @@
 #include "lib/triangle_area_calc.h"
 #include <math.h>
-#include <gsl/gsl.h>
+#include <stdexcept>
 #include <vector>
 
 namespace shape {
 float TriangleAreaCalc::getArea(std::vector<Point>& points) const {
-  Expects(points.size() == 3);
+  if (points.size() != 3)
+    throw std::invalid_argument("Invalid number of points in a Triangle");
 
   double ab = points.at(0).Distance(points.at(1));
   double bc = points.at(1).Distance(points.at(2));

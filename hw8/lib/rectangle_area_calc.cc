@@ -1,11 +1,12 @@
 #include "lib/rectangle_area_calc.h"
 #include <math.h>
-#include <gsl/gsl.h>
+#include <stdexcept>
 #include <vector>
 
 namespace shape {
 float RectangleAreaCalc::getArea(std::vector<Point>& points) const {
-  Expects(points.size() == 4);
+  if (points.size() != 4)
+    throw std::invalid_argument("Invalid number of points in a Rectangle");
 
   double ab = points.at(0).Distance(points.at(1));
   double ac = points.at(0).Distance(points.at(2));

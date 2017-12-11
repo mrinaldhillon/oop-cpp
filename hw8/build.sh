@@ -18,10 +18,9 @@ COVERAGE_EXCLUDE_LIST="'/usr/*' '${HOME}/.cache/bazel/*/*/execroot/__main__/exte
 RUN_UNDER=`which valgrind`
 
 bazel clean
-#bazel test ${BUILD_TEST} --run_under=${RUN_UNDER} --test_output=all
 bazel build ${BUILD_TEST} ${BUILD_PARAMS}
 [ $? -ne 0 ] && echo "Build Failed" && exit 1
-./bazel-bin/test/${BIN_TARGET} >> /dev/null
+${RUN_UNDER} ./bazel-bin/test/${BIN_TARGET}
 
 which lcov >> /dev/null && which genhtml >> /dev/null
 if [ $? -eq 0 ]; then
