@@ -3,10 +3,10 @@
 
 namespace bank {
 
-SavingsAccount::SavingsAccount(float openingDeposit) {
-  if (openingDeposit < 25)
+SavingsAccount::SavingsAccount(float opening_deposit) {
+  if (opening_deposit < 25)
     throw InsufficientFundsException("Minimum opening deposit: $25");
-  balance_ = openingDeposit;
+  balance_ = opening_deposit;
 }
 
 float SavingsAccount::getBalance() const { return balance_; }

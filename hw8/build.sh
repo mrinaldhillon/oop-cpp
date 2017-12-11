@@ -8,7 +8,7 @@ which bazel >> /dev/null
 
 
 PROJECT_HOME=`pwd`
-BIN_TARGET=account-test
+BIN_TARGET=polygon-test
 BUILD_TEST=test:${BIN_TARGET}
 BUILD_PARAMS=--collect_code_coverage
 COVERAGE_DIR=${PROJECT_HOME}/bazel-testlogs/test/${BIN_TARGET}
@@ -18,7 +18,7 @@ COVERAGE_EXCLUDE_LIST="'/usr/*' '${HOME}/.cache/bazel/*/*/execroot/__main__/exte
 RUN_UNDER=`which valgrind`
 
 bazel clean
-bazel test ${BUILD_TEST} --run_under=${RUN_UNDER} --test_output=all
+#bazel test ${BUILD_TEST} --run_under=${RUN_UNDER} --test_output=all
 bazel build ${BUILD_TEST} ${BUILD_PARAMS}
 [ $? -ne 0 ] && echo "Build Failed" && exit 1
 ./bazel-bin/test/${BIN_TARGET} >> /dev/null

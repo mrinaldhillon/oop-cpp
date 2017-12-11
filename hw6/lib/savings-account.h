@@ -6,7 +6,7 @@
 namespace bank {
 class SavingsAccount : public Account {
  public:
-  SavingsAccount(float openingDeposit = 0.0);
+  SavingsAccount(float opening_deposit = 0.0);
   float getBalance() const;
   float deposit(float amount = 0.0);
   void withdraw(float amount = 0.0);

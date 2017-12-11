@@ -5,12 +5,12 @@ using namespace std;
 namespace bank {
 
 CheckingAccount::CheckingAccount(
-    std::shared_ptr<SavingsAccount> savings_account, float opening_deposit) {
+    std::shared_ptr<SavingsAccount> savings_account, float opening_deposit)
+    : savings_account_(savings_account) {
   if (opening_deposit < 25)
     throw InsufficientFundsException("Minimum opening deposit: $25");
 
   balance_ = opening_deposit;
-  savings_account_ = savings_account;
 }
 
 float CheckingAccount::getBalance() const { return balance_; }
