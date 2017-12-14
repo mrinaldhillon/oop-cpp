@@ -1,0 +1,4 @@
+* HW12 Implemented File System using Composite design pattern.
+* File and Directory are derived from FSElement abstact class
+* FileSystem is singleton type
+* Used static_assert to disallow functions that don't belong to file or directory.
