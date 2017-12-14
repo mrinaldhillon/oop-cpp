@@ -2,12 +2,13 @@
 #define FILE_H
 
 #include "lib/fs_element.h"
+#include "lib/directory.h"
 
 namespace fs {
 
 class File final : public FSElement {
  public:
-  File(std::shared_ptr<FSElement> parent, const std::string& name,
+  File(const std::shared_ptr<Directory>& parent, const std::string& name,
        const std::string& owner, unsigned int size)
       : FSElement(parent, name, owner) {
     size_ = size;

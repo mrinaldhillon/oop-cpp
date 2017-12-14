@@ -1,6 +1,0 @@
-* TODO: valgrind show reachable at exit while memory leaks are 0.
-* 	this may be due to:
-*	Shared pointer of Directory containes shared pointers of
-*		children that in trun contains the shared pointer of directory. So it
-*		seems like circular reference of shared pointers.
-

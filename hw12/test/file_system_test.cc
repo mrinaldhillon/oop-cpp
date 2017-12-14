@@ -33,5 +33,10 @@ TEST_F(FileSystemTest, createTestAndTestRootSize) {
 
 TEST_F(FileSystemTest, printAllElements) { file_system_.showAllElements(); }
 
+TEST(FileSystemTest1, test) {
+std::shared_ptr<Directory> test;
+std::weak_ptr<Directory> test1 = test;
+}
+
 }  // end of namspace unnamed
 }  // end of namspace fs

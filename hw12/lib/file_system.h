@@ -1,8 +1,8 @@
 #ifndef FILE_SYSTEM_H
 #define FILE_SYSTEM_H
+
 #include <memory>
 #include "lib/directory.h"
-#include "lib/fs_element.h"
 
 namespace fs {
 

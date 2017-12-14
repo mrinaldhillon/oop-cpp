@@ -10,7 +10,7 @@ namespace fs {
 
 class FSElement {
  protected:
-  std::shared_ptr<FSElement> parent_;
+  std::weak_ptr<FSElement> parent_;
   std::string name_;
   std::string owner_;
   const std::time_t created_;
@@ -18,7 +18,7 @@ class FSElement {
   unsigned int size_;
 
  public:
-  FSElement(std::shared_ptr<FSElement> parent, const std::string& name,
+  FSElement(const std::shared_ptr<FSElement>& parent, const std::string& name,
             const std::string& owner);
   FSElement(const FSElement&) = default;
   FSElement(FSElement&&) = default;
@@ -26,7 +26,7 @@ class FSElement {
   FSElement& operator=(FSElement&&) = default;
   virtual ~FSElement() = default;
 
-  virtual std::shared_ptr<FSElement> getParent() const;
+  virtual std::weak_ptr<FSElement> getParent() const;
   virtual bool isFile() const = 0;
   virtual unsigned int getSize() const;
   virtual void setSize(unsigned int);
