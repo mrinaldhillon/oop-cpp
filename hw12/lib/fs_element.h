@@ -25,18 +25,14 @@ class FSElement {
   FSElement& operator=(const FSElement&) = default;
   FSElement& operator=(FSElement&&) = default;
   virtual ~FSElement() = default;
-
   virtual std::weak_ptr<FSElement> getParent() const;
-  virtual bool isFile() const = 0;
-  virtual unsigned int getSize() const;
-  virtual void setSize(unsigned int);
   virtual const std::string& getName() const;
   virtual const std::string& getOwner() const;
   virtual const std::time_t& getModTime() const;
   virtual const std::time_t& getCreationTime() const;
-  virtual const std::vector<std::shared_ptr<FSElement>> getChildren() const = 0;
-  virtual void appendChild(std::shared_ptr<FSElement>) = 0;
   virtual void setModTime(std::time_t&);
+  virtual bool isFile() const = 0;
+  virtual unsigned int getSize() const = 0;
 };
 
 }  // end of namespace fs

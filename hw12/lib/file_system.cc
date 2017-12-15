@@ -15,7 +15,7 @@ void FileSystem::showAllChildrenRecursive(
     std::string file_path = dir_path + "/" + child->getName();
     std::cout << file_path << std::endl;
     if (false == child->isFile()) {
-      showAllChildrenRecursive(file_path, child->getChildren());
+      showAllChildrenRecursive(file_path, std::dynamic_pointer_cast<Directory>(child)->getChildren());
     }
   }
 }

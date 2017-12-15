@@ -1,11 +1,10 @@
 #include "lib/directory.h"
-#include <cassert>
 
 namespace fs {
 
 Directory::Directory(const std::shared_ptr<Directory>& parent, const std::string& name,
                      const std::string& owner)
-    : FSElement(parent, name, owner), children_{} {}
+    : FSElement(parent, name, owner), children_{} { size_ = 0; }
 
 const std::vector<std::shared_ptr<FSElement>> Directory::getChildren() const {
   return children_;
@@ -18,16 +17,12 @@ void Directory::appendChild(std::shared_ptr<FSElement> child) {
 
 bool Directory::isFile() const { return false; }
 
-void Directory::setSize(unsigned int) {
-  static_assert("Director::setSize is not allowed");
-}
-
 unsigned int Directory::getSizeOfChildrenRecursive(
     const std::vector<std::shared_ptr<FSElement>> children) const {
   unsigned int total_size = 0;
   for (auto child : children) {
     if (false == child->isFile()) {
-      total_size += getSizeOfChildrenRecursive(child->getChildren());
+      total_size += getSizeOfChildrenRecursive(std::dynamic_pointer_cast<Directory>(child)->getChildren());
     } else
       total_size += child->getSize();
   }

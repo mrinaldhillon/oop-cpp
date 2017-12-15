@@ -16,7 +16,6 @@ class Directory final : public FSElement {
  public:
   Directory(const std::shared_ptr<Directory>& parent, const std::string& name,
             const std::string& owner);
-  void setSize(unsigned int);
   bool isFile() const;
   const std::vector<std::shared_ptr<FSElement>> getChildren() const;
   void appendChild(std::shared_ptr<FSElement> child);
