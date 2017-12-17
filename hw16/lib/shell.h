@@ -3,6 +3,7 @@
 
 #include <string>
 #include "lib/command.h"
+#include "lib/command_history.h"
 #include "lib/file_system.h"
 
 namespace fs {
@@ -10,6 +11,7 @@ namespace fs {
 class Shell final {
  private:
   std::string prompt_ = "> ";
+  CommandHistory cmd_history_;
 
  protected:
   void executeCmd(Command& cmd,

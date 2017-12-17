@@ -40,9 +40,33 @@ class ShellTest : public testing::Test {
 
 FileSystem* ShellTest::file_system_ = NULL;
 
+TEST_F(ShellTest, historyCmd) {
+  Shell shell;
+  shell.parseInputAndExecuteCmd(*file_system_, "pwd");
+  shell.parseInputAndExecuteCmd(*file_system_, "ls");
+  shell.parseInputAndExecuteCmd(*file_system_, "history");
+}
+
 TEST_F(ShellTest, lsCmd) {
   Shell shell;
   shell.parseInputAndExecuteCmd(*file_system_, "ls ");
+}
+
+TEST_F(ShellTest, pwdCmd) {
+  Shell shell;
+  shell.parseInputAndExecuteCmd(*file_system_, "pwd");
+}
+
+TEST_F(ShellTest, cdCmd) {
+  Shell shell;
+  shell.parseInputAndExecuteCmd(*file_system_, "cd home");
+  EXPECT_EQ(file_system_->getCurrent()->getName(), "home");
+  shell.parseInputAndExecuteCmd(*file_system_, "cd pictures");
+  EXPECT_EQ(file_system_->getCurrent()->getName(), "pictures");
+  shell.parseInputAndExecuteCmd(*file_system_, "cd ..");
+  EXPECT_EQ(file_system_->getCurrent()->getName(), "home");
+  shell.parseInputAndExecuteCmd(*file_system_, "cd");
+  EXPECT_EQ(file_system_->getCurrent()->getName(), "/");
 }
 
 }  // end of namespace unnamed

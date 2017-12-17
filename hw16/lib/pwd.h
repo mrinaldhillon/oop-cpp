@@ -10,15 +10,22 @@ namespace fs {
 class Pwd : public Command {
  private:
   const FileSystem* fs_;
+  void iterate(Directory& element) {
+    std::shared_ptr<Directory> dir;
+    if (dir = element.getParent().lock()) {
+      iterate(*dir);
+      std::cout << element.getName() << "/";
+    } else {
+      std::cout << element.getName();
+    }
+  }
 
  public:
-  Pwd(const FileSystem& fs) : fs_(&fs) {}
+  Pwd(const FileSystem& fs) : Command("pwd", ""), fs_(&fs) {}
 
   void execute() {
-    auto children = fs_->getChildren();
-    for (const auto child : children) {
-      std::cout << child->getName() << std::endl;
-    }
+    auto current = fs_->getCurrent();
+    iterate(*current);
   }
 };
 
