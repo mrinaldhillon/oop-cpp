@@ -1,0 +1,4 @@
+FileSystem singleton should be a shared pointer
+Commands should store a weak pointer of fs
+FS cannot be destoyed if current directory is set
+MT Safe

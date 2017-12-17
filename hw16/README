@@ -1,0 +1,4 @@
+* HW15 Implemented visitor pattern on FileSystem with counting visitor, 
+*	size counting visitor and file search visitor.
+* Cpp Concepts:
+*	enable_shared_from_this, advanced weak pointer usecases, google test shared resources
