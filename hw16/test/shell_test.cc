@@ -1,8 +1,8 @@
 #include <memory>
+#include <sstream>
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 #include "lib/libfile_system.h"
-
 namespace fs {
 namespace {
 
@@ -44,21 +44,44 @@ TEST_F(ShellTest, historyCmd) {
   Shell shell;
   shell.parseInputAndExecuteCmd(*file_system_, "pwd");
   shell.parseInputAndExecuteCmd(*file_system_, "ls");
+  std::stringstream buffer;
+  std::streambuf* sbuf = std::cout.rdbuf();
+  std::cout.rdbuf(buffer.rdbuf());
   shell.parseInputAndExecuteCmd(*file_system_, "history");
+  std::string output = buffer.str();
+  std::cout.rdbuf(sbuf);
+  EXPECT_EQ(output, "ls\npwd\n");
 }
 
 TEST_F(ShellTest, lsCmd) {
   Shell shell;
-  shell.parseInputAndExecuteCmd(*file_system_, "ls ");
+  std::stringstream buffer;
+  std::streambuf* sbuf = std::cout.rdbuf();
+  std::cout.rdbuf(buffer.rdbuf());
+  shell.parseInputAndExecuteCmd(*file_system_, "cd");
+  shell.parseInputAndExecuteCmd(*file_system_, "ls");
+  std::string output = buffer.str();
+  std::cout.rdbuf(sbuf);
+  EXPECT_EQ(output, "system\nhome\n");
 }
 
 TEST_F(ShellTest, pwdCmd) {
   Shell shell;
+  shell.parseInputAndExecuteCmd(*file_system_, "cd");
+  shell.parseInputAndExecuteCmd(*file_system_, "cd home");
+  shell.parseInputAndExecuteCmd(*file_system_, "cd pictures");
+  std::stringstream buffer;
+  std::streambuf* sbuf = std::cout.rdbuf();
+  std::cout.rdbuf(buffer.rdbuf());
   shell.parseInputAndExecuteCmd(*file_system_, "pwd");
+  std::string output = buffer.str();
+  std::cout.rdbuf(sbuf);
+  EXPECT_EQ(output, "/home/pictures/\n");
 }
 
 TEST_F(ShellTest, cdCmd) {
   Shell shell;
+  shell.parseInputAndExecuteCmd(*file_system_, "cd");
   shell.parseInputAndExecuteCmd(*file_system_, "cd home");
   EXPECT_EQ(file_system_->getCurrent()->getName(), "home");
   shell.parseInputAndExecuteCmd(*file_system_, "cd pictures");
@@ -67,6 +90,14 @@ TEST_F(ShellTest, cdCmd) {
   EXPECT_EQ(file_system_->getCurrent()->getName(), "home");
   shell.parseInputAndExecuteCmd(*file_system_, "cd");
   EXPECT_EQ(file_system_->getCurrent()->getName(), "/");
+}
+
+TEST_F(ShellTest, cdCmdThrowsRunTimeErrorException) {
+  Shell shell;
+  shell.parseInputAndExecuteCmd(*file_system_, "cd");
+  EXPECT_THROW(shell.parseInputAndExecuteCmd(*file_system_, "cd blah"), std::out_of_range);
+  shell.parseInputAndExecuteCmd(*file_system_, "cd home");
+  EXPECT_THROW(shell.parseInputAndExecuteCmd(*file_system_, "cd d.txt"), std::runtime_error);
 }
 
 }  // end of namespace unnamed

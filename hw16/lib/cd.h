@@ -10,6 +10,8 @@ namespace fs {
 class Cd : public Command {
  private:
   FileSystem* fs_;
+  const std::string name_ = "cd";
+  std::string options_;
 
   void iterate(Directory& element) {
     std::shared_ptr<Directory> dir;
@@ -23,7 +25,16 @@ class Cd : public Command {
 
  public:
   Cd(FileSystem& fs, const std::string& options)
-      : Command("cd", options), fs_(&fs) {}
+      : fs_(&fs), options_(options) {}
+  Cd(const Cd& rhs) : fs_(rhs.fs_), options_(rhs.options_) {}
+  Cd& operator=(const Cd& rhs) {
+    fs_ = rhs.fs_;
+    options_ = rhs.options_;
+    return *this;
+  }
+
+  std::string getName() const { return name_; }
+  std::string getOptions() const { return options_; }
 
   void execute() {
     auto current = fs_->getCurrent();
@@ -38,9 +49,14 @@ class Cd : public Command {
         }
     } else {
       for (auto child : fs_->getChildren()) {
-        if (!child->isFile() && child->getName() == dir_name)
+        if (child->getName() == dir_name) {
+          if (child->isFile())
+            throw std::runtime_error("cd: " + dir_name + ": Not a directory\n");
           fs_->setCurrent(std::dynamic_pointer_cast<Directory>(child));
+          return;
+        }
       }
+      throw std::out_of_range("cd: " + options_ + "No such file or directory\n");
     }
   }
 };

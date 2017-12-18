@@ -11,15 +11,28 @@ namespace fs {
 
 class History : public Command {
  private:
-  CommandHistory history_;
+  const CommandHistory* history_;
+  const std::string name_ = "history_";
 
  public:
-  History(const CommandHistory& history)
-      : Command("history", ""), history_(history) {}
+  History(const CommandHistory& history) : history_(&history) {}
+  History(const History& rhs) : history_(rhs.history_) {}
+  History& operator=(const History& rhs) {
+    history_ = rhs.history_;
+    return *this;
+  }
+
+  std::string getName() const { return name_; }
+  std::string getOptions() const { return ""; }
 
   void execute() {
-    for (const auto cmd : history_.getHistory()) {
-      std::cout << cmd->getName() << " " << cmd->getOptions() << std::endl;
+    for (const auto& cmd : history_->getHistory()) {
+      std::cout << cmd->getName();
+	std::string options = cmd->getOptions();
+	if (!options.empty())
+		std::cout << " " << cmd->getOptions() << std::endl;
+	else
+		std::cout << std::endl;
     }
   }
 };

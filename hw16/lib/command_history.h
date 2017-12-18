@@ -3,25 +3,33 @@
 
 #include <deque>
 #include <memory>
+#include <vector>
 #include "lib/command.h"
 
 namespace fs {
 
-// TODO shared_ptr is not requires, instead copy by value
 class CommandHistory {
  private:
-  std::deque<std::shared_ptr<Command>> history_;
+  std::deque<std::unique_ptr<Command>> history_{};
 
  public:
-  void push(std::shared_ptr<Command> cmd) { history_.push_front(cmd); }
+  CommandHistory() = default;
+  CommandHistory(const CommandHistory&) = delete;
+  CommandHistory& operator=(const CommandHistory&) = delete;
 
-  std::shared_ptr<Command> pop() {
-    auto cmd = history_.front();
+  void push(std::unique_ptr<Command> cmd) {
+    history_.push_front(std::move(cmd));
+  }
+
+  std::unique_ptr<Command> pop() {
+    auto cmd = std::move(history_.front());
     history_.pop_front();
     return cmd;
   }
 
-  const std::deque<std::shared_ptr<Command>> getHistory() { return history_; }
+  const std::deque<std::unique_ptr<Command>>& getHistory() const {
+    return history_;
+  }
 };
 
 }  // end of namespace fs

@@ -10,15 +10,19 @@ namespace fs {
 class Ls : public Command {
  private:
   const FileSystem* fs_;
+  const std::string name_ = "ls";
   // std::deque<std::string> options_tokens_{};
  public:
-  Ls(const FileSystem& fs, const std::string& options)
-      : Command("ls", options), fs_(&fs) {}
-  Ls(const Ls& ls) : Command("ls", ls.options_), fs_(ls.fs_) {}
+  Ls(const FileSystem& fs) : fs_(&fs) {}
+  Ls(const Ls& ls) : fs_(ls.fs_) {}
   Ls& operator=(const Ls& ls) {
     fs_ = ls.fs_;
     return *this;
   }
+
+  std::string getName() const { return name_; }
+  std::string getOptions() const { return ""; }
+
   void execute() {
     /*    if (options.empty()) return;
         std::regex ws_re("\\s+");
