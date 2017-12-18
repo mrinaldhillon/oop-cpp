@@ -24,6 +24,7 @@ class Directory final : public FSElement,
   void accept(FSVisitor&);
   unsigned int getDiskUtil() const;
   void addChild(std::shared_ptr<FSElement> child, int index);
+  std::string getInfo() const;
 };
 
 }  // end of namespace fs

@@ -1,4 +1,6 @@
 #include "lib/directory.h"
+#include <sstream>
+#include <string>
 
 namespace fs {
 
@@ -51,4 +53,9 @@ void Directory::addChild(std::shared_ptr<FSElement> child, int index) {
   last_modified_ = std::time(nullptr);
 }
 
+std::string Directory::getInfo() const {
+  std::ostringstream oss;
+  oss << "directory\t" << getSize() << "\t" << getOwner() << "\t" << getName();
+  return oss.str();
+}
 }  // end of namespace fs

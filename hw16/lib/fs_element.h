@@ -41,7 +41,7 @@ class FSElement {
   virtual unsigned int getSize() const = 0;
   virtual void accept(FSVisitor&) = 0;
   virtual unsigned int getDiskUtil() const = 0;
-  // virtual const std::string& getInfo() const;
+  virtual std::string getInfo() const = 0;
 };
 
 }  // end of namespace fs

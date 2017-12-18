@@ -5,6 +5,7 @@
 #include "lib/history.h"
 #include "lib/ls.h"
 #include "lib/pwd.h"
+#include "lib/dir.h"
 
 namespace fs {
 
@@ -31,6 +32,10 @@ void Shell::parseInputAndExecuteCmd(FileSystem& fs, const std::string& input) {
     auto cd = std::make_unique<Cd>(fs, options);
     cd->execute();
     cmd_history_.push(std::move(cd));
+  } else if (app == "dir") {
+    auto dir = std::make_unique<Dir>(fs, options);
+    dir->execute();
+    cmd_history_.push(std::move(dir));
   }
 }
 

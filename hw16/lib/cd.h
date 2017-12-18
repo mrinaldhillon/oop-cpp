@@ -56,7 +56,8 @@ class Cd : public Command {
           return;
         }
       }
-      throw std::out_of_range("cd: " + options_ + "No such file or directory\n");
+      throw std::out_of_range("cd: " + options_ +
+                              "No such file or directory\n");
     }
   }
 };

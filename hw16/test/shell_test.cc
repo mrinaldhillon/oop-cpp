@@ -19,7 +19,7 @@ class ShellTest : public testing::Test {
     auto b = std::make_shared<File>(system, "b.txt", "root", 20);
     auto c = std::make_shared<File>(system, "c.txt", "root", 20);
     auto d = std::make_shared<File>(home, "d.txt", "user", 20);
-    auto e = std::make_shared<File>(pictures, "e.png", "root", 20);
+    auto e = std::make_shared<File>(pictures, "e.png", "user", 20);
     auto f = std::make_shared<File>(pictures, "f.png", "user", 20);
     auto x = std::make_shared<Link>(home, "x", "user", system);
     auto y = std::make_shared<Link>(pictures, "y", "user", f);
@@ -92,13 +92,43 @@ TEST_F(ShellTest, cdCmd) {
   EXPECT_EQ(file_system_->getCurrent()->getName(), "/");
 }
 
-TEST_F(ShellTest, cdCmdThrowsRunTimeErrorException) {
+TEST_F(ShellTest, cdCmdThrowsRunTimeError) {
   Shell shell;
   shell.parseInputAndExecuteCmd(*file_system_, "cd");
-  EXPECT_THROW(shell.parseInputAndExecuteCmd(*file_system_, "cd blah"), std::out_of_range);
+  EXPECT_THROW(shell.parseInputAndExecuteCmd(*file_system_, "cd blah"),
+               std::out_of_range);
   shell.parseInputAndExecuteCmd(*file_system_, "cd home");
-  EXPECT_THROW(shell.parseInputAndExecuteCmd(*file_system_, "cd d.txt"), std::runtime_error);
+  EXPECT_THROW(shell.parseInputAndExecuteCmd(*file_system_, "cd d.txt"),
+               std::runtime_error);
 }
 
+TEST_F(ShellTest, dirCmd) {
+  Shell shell;
+  std::stringstream buffer;
+  std::streambuf* sbuf = std::cout.rdbuf();
+  std::cout.rdbuf(buffer.rdbuf());
+
+  shell.parseInputAndExecuteCmd(*file_system_, "cd");
+  shell.parseInputAndExecuteCmd(*file_system_, "cd home");
+  shell.parseInputAndExecuteCmd(*file_system_, "dir");
+  shell.parseInputAndExecuteCmd(*file_system_, "cd pictures");
+  shell.parseInputAndExecuteCmd(*file_system_, "dir e.png");
+  std::string output = buffer.str();
+  std::cout.rdbuf(sbuf);
+  EXPECT_EQ(output,
+            "file\t20\tuser\td."
+            "txt\nlink\t0\tuser\tx\ndirectory\t40\tuser\tpictures\nfile\t20\tus"
+            "er\te.png\n");
+}
+
+TEST_F(ShellTest, dirCmdThrowsOutOfRange) {
+  Shell shell;
+  shell.parseInputAndExecuteCmd(*file_system_, "cd");
+  EXPECT_THROW(shell.parseInputAndExecuteCmd(*file_system_, "cd blah"),
+               std::out_of_range);
+  shell.parseInputAndExecuteCmd(*file_system_, "cd home");
+  EXPECT_THROW(shell.parseInputAndExecuteCmd(*file_system_, "cd d.txt"),
+               std::runtime_error);
+}
 }  // end of namespace unnamed
 }  // end of namespace fs
