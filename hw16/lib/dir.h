@@ -58,8 +58,8 @@ class Dir : public Command {
         } else {
           std::cout << child->getInfo() << std::endl;
         }
+        return;
       }
-      return;
     }
     throw std::out_of_range("cd: " + options_ + "No such file or directory\n");
   }

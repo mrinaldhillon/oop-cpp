@@ -6,6 +6,7 @@
 #include "lib/ls.h"
 #include "lib/pwd.h"
 #include "lib/dir.h"
+#include "lib/mkdir.h"
 
 namespace fs {
 
@@ -36,7 +37,12 @@ void Shell::parseInputAndExecuteCmd(FileSystem& fs, const std::string& input) {
     auto dir = std::make_unique<Dir>(fs, options);
     dir->execute();
     cmd_history_.push(std::move(dir));
+  } else if (app == "mkdir") {
+    auto mkdir = std::make_unique<Mkdir>(fs, options);
+    mkdir->execute();
+    cmd_history_.push(std::move(mkdir));
   }
+
 }
 
 void Shell::startShell(FileSystem& fs) {

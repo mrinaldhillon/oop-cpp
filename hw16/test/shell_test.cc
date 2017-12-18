@@ -124,11 +124,30 @@ TEST_F(ShellTest, dirCmd) {
 TEST_F(ShellTest, dirCmdThrowsOutOfRange) {
   Shell shell;
   shell.parseInputAndExecuteCmd(*file_system_, "cd");
-  EXPECT_THROW(shell.parseInputAndExecuteCmd(*file_system_, "cd blah"),
+  EXPECT_THROW(shell.parseInputAndExecuteCmd(*file_system_, "dir blah"),
                std::out_of_range);
+}
+
+TEST_F(ShellTest, mkdirCmd) {
+  Shell shell;
+  shell.parseInputAndExecuteCmd(*file_system_, "cd");
   shell.parseInputAndExecuteCmd(*file_system_, "cd home");
-  EXPECT_THROW(shell.parseInputAndExecuteCmd(*file_system_, "cd d.txt"),
+  shell.parseInputAndExecuteCmd(*file_system_, "mkdir documents");
+  shell.parseInputAndExecuteCmd(*file_system_, "cd documents");
+  EXPECT_EQ(file_system_->getCurrent()->getName(), "documents");
+}
+
+TEST_F(ShellTest, mkdirCmdThrowsRuntimeError) {
+  Shell shell;
+  shell.parseInputAndExecuteCmd(*file_system_, "cd");
+  EXPECT_THROW(shell.parseInputAndExecuteCmd(*file_system_, "mkdir home"),
                std::runtime_error);
+}
+
+TEST_F(ShellTest, mkdirCmdThrowsInvalidArgument) {
+  Shell shell;
+  EXPECT_THROW(shell.parseInputAndExecuteCmd(*file_system_, "mkdir"),
+               std::invalid_argument);
 }
 }  // end of namespace unnamed
 }  // end of namespace fs
