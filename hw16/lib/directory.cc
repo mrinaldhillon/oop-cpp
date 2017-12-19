@@ -10,6 +10,17 @@ Directory::Directory(const std::shared_ptr<Directory>& parent,
   size_ = 0;
 }
 
+/*Directory::Directory(const Directory& rhs) : FSElement(rhs.parent_, rhs.name_,
+rhs.owner_), children_{} {
+        size_ = rhs.size_;
+        for (auto rhs.child : rhs->getChildren()) {
+                auto lhs = std::make_shared()
+
+        }
+
+}
+//  Directory& operator=(const Directory& rhs);
+*/
 const std::vector<std::shared_ptr<FSElement>> Directory::getChildren() const {
   return children_;
 }
@@ -58,4 +69,16 @@ std::string Directory::getInfo() const {
   oss << "directory\t" << getSize() << "\t" << getOwner() << "\t" << getName();
   return oss.str();
 }
+
+void Directory::rmChild(const std::string& name) {
+  int index = 0;
+  for (auto child : children_) {
+    if (name == child->getName()) {
+      children_.erase(children_.begin() + index);
+      return;
+    }
+    index++;
+  }
+}
+
 }  // end of namespace fs

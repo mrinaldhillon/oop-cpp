@@ -36,6 +36,7 @@ class FileSystem final {
   const std::vector<std::shared_ptr<FSElement>> getChildren(
       const Directory& parent) const;
   const std::vector<std::shared_ptr<FSElement>> getChildren() const;
+std::shared_ptr<FSElement> getElement(const std::string& path) const;
 };
 
 }  // end of namespace fs

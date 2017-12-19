@@ -1,12 +1,18 @@
 #include "lib/shell.h"
 #include <iostream>
 #include "lib/cd.h"
+#include "lib/chown.h"
 #include "lib/command_history.h"
-#include "lib/history.h"
-#include "lib/ls.h"
-#include "lib/pwd.h"
+#include "lib/cp.h"
 #include "lib/dir.h"
+#include "lib/history.h"
+#include "lib/ln.h"
+#include "lib/ls.h"
 #include "lib/mkdir.h"
+#include "lib/mv.h"
+#include "lib/pwd.h"
+#include "lib/redo.h"
+#include "lib/rmdir.h"
 
 namespace fs {
 
@@ -17,32 +23,47 @@ void Shell::parseInputAndExecuteCmd(FileSystem& fs, const std::string& input) {
     options = input.substr(app.size() + 1);  //+1 forwhite space
   }
 
-  if (app == "pwd") {
-    auto pwd = std::make_unique<Pwd>(fs);
-    pwd->execute();
-    cmd_history_.push(std::move(pwd));
-  } else if (app == "ls") {
-    auto ls = std::make_unique<Ls>(fs);
-    ls->execute();
-    cmd_history_.push(std::move(ls));
-  } else if (app == "history") {
-    auto history = std::make_unique<History>(cmd_history_);
-    history->execute();
-    cmd_history_.push(std::move(history));
-  } else if (app == "cd") {
-    auto cd = std::make_unique<Cd>(fs, options);
-    cd->execute();
-    cmd_history_.push(std::move(cd));
-  } else if (app == "dir") {
-    auto dir = std::make_unique<Dir>(fs, options);
-    dir->execute();
-    cmd_history_.push(std::move(dir));
-  } else if (app == "mkdir") {
-    auto mkdir = std::make_unique<Mkdir>(fs, options);
-    mkdir->execute();
-    cmd_history_.push(std::move(mkdir));
-  }
+  std::unique_ptr<Command> cmd = nullptr;
+  try {
+    if (app == "pwd") {
+      cmd = std::make_unique<Pwd>(fs);
+    } else if (app == "ls") {
+      cmd = std::make_unique<Ls>(fs);
+    } else if (app == "history") {
+      cmd = std::make_unique<History>(cmd_history_);
+    } else if (app == "cd") {
+      cmd = std::make_unique<Cd>(fs, options);
+    } else if (app == "dir") {
+      cmd = std::make_unique<Dir>(fs, options);
+    } else if (app == "mkdir") {
+      cmd = std::make_unique<Mkdir>(fs, options);
+    } else if (app == "rmdir") {
+      cmd = std::make_unique<Rmdir>(fs, options);
+    } else if (app == "ln") {
+      cmd = std::make_unique<Ln>(fs, options);
+    } else if (app == "mv") {
+      cmd = std::make_unique<Mv>(fs, options);
+    } else if (app == "cp") {
+      cmd = std::make_unique<Cp>(fs, options);
+    } else if (app == "chown") {
+      cmd = std::make_unique<Chown>(fs, options);
+    } else if (app == "redo") {
+      cmd = std::make_unique<Redo>(cmd_history_);
+    } else if (app == "exit") {
+      exit(0);
+    } else {
+      std::cout << app << ": command not found..." << std::endl;
+    }
 
+    if (nullptr != cmd) cmd->execute();
+    cmd_history_.push(std::move(cmd));
+  } catch (const std::runtime_error& e) {
+    std::cout << e.what() << std::endl;
+    cmd_history_.push(std::move(cmd));
+  } catch (const std::invalid_argument& e) {
+    std::cout << e.what() << std::endl;
+    cmd_history_.push(std::move(cmd));
+  }
 }
 
 void Shell::startShell(FileSystem& fs) {

@@ -17,6 +17,9 @@ class Directory final : public FSElement,
  public:
   Directory(const std::shared_ptr<Directory>& parent, const std::string& name,
             const std::string& owner);
+  // Directory(const Directory& rhs);
+  // Directory& operator=(const Directory& rhs);
+
   bool isFile() const;
   const std::vector<std::shared_ptr<FSElement>> getChildren() const;
   void appendChild(std::shared_ptr<FSElement> child);
@@ -25,6 +28,8 @@ class Directory final : public FSElement,
   unsigned int getDiskUtil() const;
   void addChild(std::shared_ptr<FSElement> child, int index);
   std::string getInfo() const;
+  void rmChild(
+      const std::string& name);  // throws range_error of element not found
 };
 
 }  // end of namespace fs

@@ -19,6 +19,7 @@ FSElement::FSElement(const std::shared_ptr<Directory>& parent,
 std::weak_ptr<Directory> FSElement::getParent() const { return parent_; }
 void FSElement::setParent(const std::shared_ptr<Directory>& parent) {
   parent_ = parent;
+  last_modified_ = std::time(nullptr);
 }
 const std::string& FSElement::getName() const { return name_; }
 void FSElement::setName(const std::string& name) { name_ = name; }
