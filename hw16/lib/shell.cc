@@ -13,6 +13,7 @@
 #include "lib/pwd.h"
 #include "lib/redo.h"
 #include "lib/rmdir.h"
+#include "lib/sort.h"
 
 namespace fs {
 
@@ -49,6 +50,8 @@ void Shell::parseInputAndExecuteCmd(FileSystem& fs, const std::string& input) {
       cmd = std::make_unique<Chown>(fs, options);
     } else if (app == "redo") {
       cmd = std::make_unique<Redo>(cmd_history_);
+    } else if (app == "sort") {
+      cmd = std::make_unique<Sort>(fs, options);
     } else if (app == "exit") {
       exit(0);
     } else {

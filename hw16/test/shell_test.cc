@@ -244,5 +244,30 @@ TEST_F(ShellTest, redoCmd) {
 
   std::cout.rdbuf(sbuf);
 }
+
+TEST_F(ShellTest, sortCmd) {
+  Shell shell;
+  std::stringstream buffer;
+  std::streambuf* sbuf = std::cout.rdbuf();
+  std::cout.rdbuf(buffer.rdbuf());
+  shell.parseInputAndExecuteCmd(*file_system_, "cd");
+  shell.parseInputAndExecuteCmd(*file_system_, "sort");
+  std::string sorted = buffer.str();
+  buffer.str("");
+  buffer.clear();
+  shell.parseInputAndExecuteCmd(*file_system_, "sort reverse");
+  std::string rev_sorted = buffer.str();
+  buffer.str("");
+  buffer.clear();
+  shell.parseInputAndExecuteCmd(*file_system_, "cp /home/d.txt /system/");
+  shell.parseInputAndExecuteCmd(*file_system_, "sort time");
+  std::string time_sorted = buffer.str();
+  std::cout.rdbuf(sbuf);
+  EXPECT_EQ(sorted, "home\nsystem\n");
+  EXPECT_EQ(rev_sorted, "system\nhome\n");
+
+  EXPECT_EQ(time_sorted, "home\nsystem\n");
+}
+
 }  // end of namespace unnamed
 }  // end of namespace fs

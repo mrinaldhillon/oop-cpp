@@ -2,8 +2,8 @@
 #define FILE_SYSTEM_H
 
 #include <memory>
+#include "lib/comparator.h"
 #include "lib/directory.h"
-
 namespace fs {
 
 class FileSystem final {
@@ -15,7 +15,7 @@ class FileSystem final {
   void showAllChildrenRecursive(
       const std::string& dir_path,
       const std::vector<std::shared_ptr<FSElement>> children) const;
-
+int getInsertionLocation(const Directory& parent, std::shared_ptr<FSElement> child) const;
  public:
   FileSystem(const FileSystem&) = delete;
   FileSystem& operator=(const FileSystem) = delete;
@@ -36,7 +36,9 @@ class FileSystem final {
   const std::vector<std::shared_ptr<FSElement>> getChildren(
       const Directory& parent) const;
   const std::vector<std::shared_ptr<FSElement>> getChildren() const;
-std::shared_ptr<FSElement> getElement(const std::string& path) const;
+  std::shared_ptr<FSElement> getElement(const std::string& path) const;
+  std::vector<std::shared_ptr<FSElement>> sort(const Directory& parent,
+                                               Comparator& comp) const;
 };
 
 }  // end of namespace fs

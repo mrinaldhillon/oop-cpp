@@ -1,8 +1,10 @@
 #include "lib/file_system.h"
+#include <algorithm>
 #include <cassert>
 #include <experimental/filesystem>
 #include <iostream>
 #include <vector>
+#include "lib/alphabetical_comparator.h"
 
 namespace std_exp_fs = std::experimental::filesystem;
 
@@ -43,18 +45,15 @@ void FileSystem::setCurrent(std::shared_ptr<Directory> current) {
 }
 
 void FileSystem::addChild(Directory& parent, std::shared_ptr<FSElement> child) {
-  // TODO: use sort
-  parent.addChild(child, parent.getChildren().size() - 1);
+  parent.addChild(child, getInsertionLocation(parent, child));
 }
 
 void FileSystem::addChild(std::shared_ptr<FSElement> child) {
-  // TODO: use sort
-  current_->addChild(child, current_->getChildren().size() - 1);
+  current_->addChild(child, getInsertionLocation(*current_, child));
 }
 
 const std::vector<std::shared_ptr<FSElement>> FileSystem::getChildren(
     const Directory& parent) const {
-  // TBD: Not sure why this is useful
   return parent.getChildren();
 }
 
@@ -105,6 +104,24 @@ std::shared_ptr<FSElement> FileSystem::getElement(
       prev = nullptr;
   }
   return current;
+}
+
+std::vector<std::shared_ptr<FSElement>> FileSystem::sort(
+    const Directory& parent, Comparator& comp) const {
+  auto sorted_children = parent.getChildren();
+  std::sort(sorted_children.begin(), sorted_children.end(), std::ref(comp));
+  return sorted_children;
+}
+
+int FileSystem::getInsertionLocation(const Directory& parent,
+                                     std::shared_ptr<FSElement> child) const {
+  AlphabeticalComparator comp;
+  int index = 0;
+  for (auto ch : parent.getChildren()) {
+    if (!comp(ch, child)) break;
+    index++;
+  }
+  return index;
 }
 
 }  // end of namespace fs

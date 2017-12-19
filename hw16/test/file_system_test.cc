@@ -88,5 +88,14 @@ TEST_F(FileSystemTest, fileSearchVisitorForPNGFiles) {
   EXPECT_EQ(2, v.getFoundFiles().size());
 }
 
+TEST_F(FileSystemTest, compareSortedWithReverseSorted) {
+  auto root = file_system_->getRoot();
+  auto sorted = root->getChildren(); // children sorted by default
+  ReverseAlphabeticalComparator reverse_comp;
+  auto reverse_sorted = file_system_->sort(*root, reverse_comp);
+  EXPECT_THAT(sorted,
+              ::testing::WhenSortedBy(reverse_comp, reverse_sorted));
+}
+
 }  // end of namspace unnamed
 }  // end of namspace fs

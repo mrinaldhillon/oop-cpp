@@ -13,12 +13,12 @@ namespace fs {
 
 class Cp : public Command {
  private:
-  const FileSystem* fs_;
+  FileSystem* fs_;
   const std::string name_ = "cp";
   std::string options_;
 
  public:
-  Cp(const FileSystem& fs, const std::string& options)
+  Cp(FileSystem& fs, const std::string& options)
       : fs_(&fs), options_(options) {}
   Cp(const Cp& rhs) : fs_(rhs.fs_), options_(rhs.options_) {}
   Cp& operator=(const Cp& rhs) {
@@ -45,7 +45,7 @@ class Cp : public Command {
     for (auto child : dynamic_cast<const Directory&>(src).getChildren()) {
       auto copied_child =
           copy_element(*child, child->getName(), copied_element);
-      copied_element->appendChild(copied_child);
+      fs_->addChild(*copied_element, copied_child);
     }
     return copied_element;
   }
@@ -63,7 +63,7 @@ class Cp : public Command {
         if (child->isFile()) {
           if (src_fs_element->isFile()) {  // overwrite
             dst_dir_element->rmChild(child->getName());
-            dst_dir_element->appendChild(copied_element);
+            fs_->addChild(*dst_dir_element, copied_element);
             return;
           } else {
             // directory cannot overwrite file
@@ -79,14 +79,14 @@ class Cp : public Command {
                                      ": with non directory");
           } else {
             dst_dir_element->rmChild(child->getName());
-            dst_dir_element->appendChild(copied_element);
+            fs_->addChild(*dst_dir_element, copied_element);
             return;
           }
         }
       }
     }
-	// if dst does not contain child of same name, simple append
-    dst_dir_element->appendChild(copied_element);
+    // if dst does not contain child of same name, simple addChild
+    fs_->addChild(*dst_dir_element, copied_element);
   }
 
   void execute() {
