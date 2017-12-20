@@ -7,10 +7,10 @@ namespace fs {
 namespace {
 class FileSystemTest : public testing::Test {
  protected:
-  static FileSystem* file_system_;
+  static FileSystem* fs_;
   static void SetUpTestCase() {
-    file_system_ = &FileSystem::getFileSystem();
-    auto root = file_system_->getRoot();
+    fs_ = &FileSystem::getFileSystem();
+    auto root = fs_->getRoot();
     auto system = std::make_shared<Directory>(root, "system", "root");
     auto home = std::make_shared<Directory>(root, "home", "root");
     auto pictures = std::make_shared<Directory>(home, "pictures", "user");
@@ -37,17 +37,17 @@ class FileSystemTest : public testing::Test {
   }
 };
 
-FileSystem* FileSystemTest::file_system_ = NULL;
+FileSystem* FileSystemTest::fs_ = NULL;
 
-TEST_F(FileSystemTest, printAllElements) { file_system_->showAllElements(); }
+TEST_F(FileSystemTest, printAllElements) { fs_->showAllElements(); }
 
 TEST_F(FileSystemTest, rootTreeSize) {
-  auto root = file_system_->getRoot();
+  auto root = fs_->getRoot();
   EXPECT_EQ(120, root->getSize());
 }
 
 TEST_F(FileSystemTest, linkTargetSize) {
-  auto root = file_system_->getRoot();
+  auto root = fs_->getRoot();
   auto children = root->getChildren();
   for (const auto child : children) {
     if (child->getName() == "x") {
@@ -59,7 +59,7 @@ TEST_F(FileSystemTest, linkTargetSize) {
 }
 
 TEST_F(FileSystemTest, countingVisitorTest) {
-  auto root = file_system_->getRoot();
+  auto root = fs_->getRoot();
   CountingVisitor v;
   root->accept(v);
   EXPECT_EQ(6, v.getFileNum());
@@ -68,33 +68,48 @@ TEST_F(FileSystemTest, countingVisitorTest) {
 }
 
 TEST_F(FileSystemTest, sizeCountingVisitorTest) {
-  auto root = file_system_->getRoot();
+  auto root = fs_->getRoot();
   SizeCountingVisitor v;
   root->accept(v);
   EXPECT_EQ(120, v.getTotalSize());
 }
 
 TEST_F(FileSystemTest, fileSearchVisitorForTextFiles) {
-  auto root = file_system_->getRoot();
+  auto root = fs_->getRoot();
   FileSearchVisitor v(".txt");
   root->accept(v);
   EXPECT_EQ(4, v.getFoundFiles().size());
 }
 
 TEST_F(FileSystemTest, fileSearchVisitorForPNGFiles) {
-  auto root = file_system_->getRoot();
+  auto root = fs_->getRoot();
   FileSearchVisitor v(".png");
   root->accept(v);
   EXPECT_EQ(2, v.getFoundFiles().size());
 }
 
 TEST_F(FileSystemTest, compareSortedWithReverseSorted) {
-  auto root = file_system_->getRoot();
-  auto sorted = root->getChildren(); // children sorted by default
+  auto root = fs_->getRoot();
+  auto sorted = root->getChildren();  // children sorted by default
   ReverseAlphabeticalComparator reverse_comp;
-  auto reverse_sorted = file_system_->sort(*root, reverse_comp);
-  EXPECT_THAT(sorted,
-              ::testing::WhenSortedBy(reverse_comp, reverse_sorted));
+  auto reverse_sorted = fs_->sort(*root, reverse_comp);
+  EXPECT_THAT(sorted, ::testing::WhenSortedBy(reverse_comp, reverse_sorted));
+}
+
+TEST_F(FileSystemTest, getElement) {
+  Shell shell;
+  fs_->setCurrent(fs_->getRoot());
+  EXPECT_EQ(fs_->getElement("/home/d.txt")->getName(), "d.txt");
+  EXPECT_EQ(fs_->getElement("/home/")->getName(), "home");
+  EXPECT_EQ(fs_->getElement("/home/pictures")->getName(), "pictures");
+  EXPECT_EQ(fs_->getElement("/home/../system/./a.txt")->getName(), "a.txt");
+  EXPECT_EQ(fs_->getElement("/home/d.text"), nullptr);
+  EXPECT_EQ(fs_->getElement("./home/d.txt")->getName(), "d.txt");
+  fs_->setCurrent(
+      std::dynamic_pointer_cast<Directory>(fs_->getElement("/home")));
+  EXPECT_EQ(fs_->getElement("../system/a.txt")->getName(), "a.txt");
+  EXPECT_EQ(fs_->getElement("..")->getName(), "/");
+  EXPECT_EQ(fs_->getElement(".")->getName(), "home");
 }
 
 }  // end of namspace unnamed

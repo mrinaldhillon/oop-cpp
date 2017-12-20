@@ -12,7 +12,7 @@ namespace fs {
 class History : public Command {
  private:
   const CommandHistory* history_;
-  const std::string name_ = "history_";
+  const std::string name_ = "history";
 
  public:
   History(const CommandHistory& history) : history_(&history) {}
@@ -26,13 +26,19 @@ class History : public Command {
   std::string getOptions() const { return ""; }
 
   void execute() {
+    auto& history = history_->getHistory();
+    if (history.empty()) {
+      std::cout << "history is empty" << std::endl;
+      return;
+    }
+
     for (const auto& cmd : history_->getHistory()) {
       std::cout << cmd->getName();
-	std::string options = cmd->getOptions();
-	if (!options.empty())
-		std::cout << " " << cmd->getOptions() << std::endl;
-	else
-		std::cout << std::endl;
+      auto options = cmd->getOptions();
+      if (!options.empty())
+        std::cout << " " << options << std::endl;
+      else
+        std::cout << std::endl;
     }
   }
 };

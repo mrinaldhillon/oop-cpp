@@ -34,9 +34,9 @@ class FSElement {
   virtual void setName(const std::string&);
   virtual const std::string& getOwner() const;
   virtual void setOwner(const std::string&);
-  virtual const std::time_t& getModTime() const;
+  virtual std::time_t getModTime() const;
   virtual void setModTime(const std::time_t&);
-  virtual const std::time_t& getCreationTime() const;
+  virtual std::time_t getCreationTime() const;
   virtual bool isFile() const = 0;
   virtual unsigned int getSize() const = 0;
   virtual void accept(FSVisitor&) = 0;

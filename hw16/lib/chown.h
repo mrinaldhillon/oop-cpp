@@ -48,7 +48,7 @@ class Chown : public Command {
     auto target_fs_element = fs_->getElement(target_path);
     if (nullptr == target_fs_element) {
       throw std::runtime_error("chown: " + target_path +
-                               ": file/dir not found");
+                               " : file/dir not found");
     }
     target_fs_element->setOwner(owner);
   }

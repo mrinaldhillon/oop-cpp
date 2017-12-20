@@ -25,10 +25,10 @@ const std::string& FSElement::getName() const { return name_; }
 void FSElement::setName(const std::string& name) { name_ = name; }
 const std::string& FSElement::getOwner() const { return owner_; }
 void FSElement::setOwner(const std::string& owner) { owner_ = owner; }
-const std::time_t& FSElement::getModTime() const { return last_modified_; }
+std::time_t FSElement::getModTime() const { return last_modified_; }
 void FSElement::setModTime(const std::time_t& last_modified) {
   last_modified_ = last_modified;
 }
-const std::time_t& FSElement::getCreationTime() const { return created_; }
+std::time_t FSElement::getCreationTime() const { return created_; }
 
 }  // end of namespace fs

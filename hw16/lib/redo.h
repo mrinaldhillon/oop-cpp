@@ -10,11 +10,11 @@ namespace fs {
 
 class Redo : public Command {
  private:
-  CommandHistory* history_;
-  const std::string name_ = "history_";
+  const CommandHistory* history_;
+  const std::string name_ = "redo";
 
  public:
-  Redo(CommandHistory& history) : history_(&history) {}
+  Redo(const CommandHistory& history) : history_(&history) {}
   Redo(const Redo& rhs) : history_(rhs.history_) {}
   Redo& operator=(const Redo& rhs) {
     history_ = rhs.history_;
@@ -28,7 +28,9 @@ class Redo : public Command {
     auto& history = history_->getHistory();
     if (history.empty()) {
       std::cout << "history is empty" << std::endl;
+      return;
     }
+
     Command& cmd = *history.front();
     cmd.execute();
   }

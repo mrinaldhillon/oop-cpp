@@ -3,270 +3,216 @@
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 #include "lib/libfile_system.h"
+
 namespace fs {
 namespace {
 
 class ShellTest : public testing::Test {
  protected:
-  static FileSystem* file_system_;
+  static FileSystem* fs_;
+  static Shell shell_;
   static void SetUpTestCase() {
-    file_system_ = &FileSystem::getFileSystem();
-    auto root = file_system_->getRoot();
+    fs_ = &FileSystem::getFileSystem();
+    auto root = fs_->getRoot();
     auto system = std::make_shared<Directory>(root, "system", "root");
     auto home = std::make_shared<Directory>(root, "home", "root");
     auto pictures = std::make_shared<Directory>(home, "pictures", "user");
-    auto a = std::make_shared<File>(system, "a.txt", "root", 20);
-    auto b = std::make_shared<File>(system, "b.txt", "root", 20);
-    auto c = std::make_shared<File>(system, "c.txt", "root", 20);
-    auto d = std::make_shared<File>(home, "d.txt", "user", 20);
-    auto e = std::make_shared<File>(pictures, "e.png", "user", 20);
-    auto f = std::make_shared<File>(pictures, "f.png", "user", 20);
+    auto a = std::make_shared<File>(system, "a.txt", "root", 10);
+    auto b = std::make_shared<File>(system, "b.txt", "root", 10);
+    auto c = std::make_shared<File>(system, "c.txt", "root", 10);
+    auto d = std::make_shared<File>(home, "d.txt", "user", 10);
+    auto e = std::make_shared<File>(pictures, "e.png", "user", 10);
+    auto f = std::make_shared<File>(pictures, "f.png", "user", 10);
     auto x = std::make_shared<Link>(home, "x", "user", system);
     auto y = std::make_shared<Link>(pictures, "y", "user", f);
 
-    system->appendChild(a);
-    system->appendChild(b);
-    system->appendChild(c);
-    home->appendChild(d);
-    home->appendChild(x);
-    home->appendChild(pictures);
-    pictures->appendChild(e);
-    pictures->appendChild(f);
-    pictures->appendChild(y);
-    root->appendChild(system);
-    root->appendChild(home);
+    fs_->addChild(*system, a);
+    fs_->addChild(*system, b);
+    fs_->addChild(*system, c);
+    fs_->addChild(*home, d);
+    fs_->addChild(*home, x);
+    fs_->addChild(*home, pictures);
+    fs_->addChild(*pictures, e);
+    fs_->addChild(*pictures, f);
+    fs_->addChild(*pictures, y);
+    fs_->addChild(*root, system);
+    fs_->addChild(*root, home);
   }
 };
 
-FileSystem* ShellTest::file_system_ = NULL;
+FileSystem* ShellTest::fs_ = NULL;
+Shell ShellTest::shell_;
 
-TEST_F(ShellTest, historyCmd) {
-  Shell shell;
-  shell.parseInputAndExecuteCmd(*file_system_, "pwd");
-  shell.parseInputAndExecuteCmd(*file_system_, "ls");
+std::string getStdout(Shell& shell, FileSystem& fs, const std::string& input) {
   std::stringstream buffer;
   std::streambuf* sbuf = std::cout.rdbuf();
   std::cout.rdbuf(buffer.rdbuf());
-  shell.parseInputAndExecuteCmd(*file_system_, "history");
+
+  shell.parseInputAndExecuteCmd(fs, input);
   std::string output = buffer.str();
   std::cout.rdbuf(sbuf);
-  EXPECT_EQ(output, "ls\npwd\n");
+  return output;
+}
+
+void suppressStdout(Shell& shell, FileSystem& fs, const std::string& input) {
+  std::stringstream buffer;
+  std::streambuf* sbuf = std::cout.rdbuf();
+  std::cout.rdbuf(nullptr);
+  shell.parseInputAndExecuteCmd(fs, input);
+  std::cout.rdbuf(sbuf);
+}
+
+TEST_F(ShellTest, visitors) {
+  Shell shell;
+  shell.parseInputAndExecuteCmd(*fs_, "cd");
+  EXPECT_EQ(getStdout(shell_, *fs_, "count"), "Dirs :4, Files :6, Links :2\n");
+  EXPECT_EQ(getStdout(shell_, *fs_, "search .txt"),
+            "d.txt\na.txt\nb.txt\nc.txt\n");
+  EXPECT_EQ(getStdout(shell_, *fs_, "du"), "60\n");
+}
+
+TEST_F(ShellTest, historyCmd) {
+  Shell shell;
+  suppressStdout(shell, *fs_, "pwd");
+  suppressStdout(shell, *fs_, "ls");
+  EXPECT_EQ(getStdout(shell, *fs_, "history"), "ls\npwd\n");
 }
 
 TEST_F(ShellTest, lsCmd) {
   Shell shell;
-  std::stringstream buffer;
-  std::streambuf* sbuf = std::cout.rdbuf();
-  std::cout.rdbuf(buffer.rdbuf());
-  shell.parseInputAndExecuteCmd(*file_system_, "cd");
-  shell.parseInputAndExecuteCmd(*file_system_, "ls");
-  std::string output = buffer.str();
-  std::cout.rdbuf(sbuf);
-  EXPECT_EQ(output, "system\nhome\n");
-}
-
-TEST_F(ShellTest, pwdCmd) {
-  Shell shell;
-  shell.parseInputAndExecuteCmd(*file_system_, "cd");
-  shell.parseInputAndExecuteCmd(*file_system_, "cd home");
-  shell.parseInputAndExecuteCmd(*file_system_, "cd pictures");
-  std::stringstream buffer;
-  std::streambuf* sbuf = std::cout.rdbuf();
-  std::cout.rdbuf(buffer.rdbuf());
-  shell.parseInputAndExecuteCmd(*file_system_, "pwd");
-  std::string output = buffer.str();
-  std::cout.rdbuf(sbuf);
-  EXPECT_EQ(output, "/home/pictures/\n");
+  EXPECT_EQ(getStdout(shell, *fs_, "ls /"), "home\nsystem\n");
 }
 
 TEST_F(ShellTest, cdCmd) {
   Shell shell;
-  shell.parseInputAndExecuteCmd(*file_system_, "cd");
-  shell.parseInputAndExecuteCmd(*file_system_, "cd home");
-  EXPECT_EQ(file_system_->getCurrent()->getName(), "home");
-  shell.parseInputAndExecuteCmd(*file_system_, "cd pictures");
-  EXPECT_EQ(file_system_->getCurrent()->getName(), "pictures");
-  shell.parseInputAndExecuteCmd(*file_system_, "cd ..");
-  EXPECT_EQ(file_system_->getCurrent()->getName(), "home");
-  shell.parseInputAndExecuteCmd(*file_system_, "cd");
-  EXPECT_EQ(file_system_->getCurrent()->getName(), "/");
+  shell.parseInputAndExecuteCmd(*fs_, "cd");
+  shell.parseInputAndExecuteCmd(*fs_, "cd home");
+  EXPECT_EQ(fs_->getCurrent()->getName(), "home");
+  shell.parseInputAndExecuteCmd(*fs_, "cd ./pictures");
+  EXPECT_EQ(fs_->getCurrent()->getName(), "pictures");
+  shell.parseInputAndExecuteCmd(*fs_, "cd ..");
+  EXPECT_EQ(fs_->getCurrent()->getName(), "home");
+  shell.parseInputAndExecuteCmd(*fs_, "cd /system/../home/pictures/./");
+  EXPECT_EQ(fs_->getCurrent()->getName(), "pictures");
+  EXPECT_EQ(getStdout(shell, *fs_, "cd blah"), "cd: blah : dir not found\n");
+  EXPECT_EQ(getStdout(shell, *fs_, "cd /home/pictures/e.png"),
+            "cd: /home/pictures/e.png : target is non directory\n");
 }
 
-/*TEST_F(ShellTest, cdCmdThrowsRunTimeError) {
+TEST_F(ShellTest, pwdCmd) {
   Shell shell;
-  shell.parseInputAndExecuteCmd(*file_system_, "cd");
-  EXPECT_THROW(shell.parseInputAndExecuteCmd(*file_system_, "cd blah"),
-               std::out_of_range);
-  shell.parseInputAndExecuteCmd(*file_system_, "cd home");
-  EXPECT_THROW(shell.parseInputAndExecuteCmd(*file_system_, "cd d.txt"),
-               std::runtime_error);
-}*/
+  shell.parseInputAndExecuteCmd(*fs_, "cd /home/pictures");
+  EXPECT_EQ(getStdout(shell, *fs_, "pwd"), "/home/pictures/\n");
+}
 
 TEST_F(ShellTest, dirCmd) {
   Shell shell;
-  std::stringstream buffer;
-  std::streambuf* sbuf = std::cout.rdbuf();
-  std::cout.rdbuf(buffer.rdbuf());
-
-  shell.parseInputAndExecuteCmd(*file_system_, "cd");
-  shell.parseInputAndExecuteCmd(*file_system_, "cd home");
-  shell.parseInputAndExecuteCmd(*file_system_, "dir");
-  shell.parseInputAndExecuteCmd(*file_system_, "cd pictures");
-  shell.parseInputAndExecuteCmd(*file_system_, "dir e.png");
-  std::string output = buffer.str();
-  std::cout.rdbuf(sbuf);
-  EXPECT_EQ(output,
-            "file\t20\tuser\td."
-            "txt\nlink\t0\tuser\tx\ndirectory\t40\tuser\tpictures\nfile\t20\tus"
-            "er\te.png\n");
+  auto dtxt = fs_->getElement("/home/d.txt");
+  std::time_t mod_time = dtxt->getModTime();
+  std::ostringstream oss;
+  oss << "file\tuser\t10\t" << std::asctime(std::localtime(&mod_time))
+      << "\td.txt\n";
+  EXPECT_EQ(getStdout(shell, *fs_, "dir /home/d.txt"), oss.str());
 }
-
-/*TEST_F(ShellTest, dirCmdThrowsOutOfRange) {
-  Shell shell;
-  shell.parseInputAndExecuteCmd(*file_system_, "cd");
-  EXPECT_THROW(shell.parseInputAndExecuteCmd(*file_system_, "dir blah"),
-               std::range_error);
-}*/
 
 TEST_F(ShellTest, mkdirCmd) {
   Shell shell;
-  shell.parseInputAndExecuteCmd(*file_system_, "cd");
-  shell.parseInputAndExecuteCmd(*file_system_, "cd home");
-  shell.parseInputAndExecuteCmd(*file_system_, "mkdir documents");
-  shell.parseInputAndExecuteCmd(*file_system_, "cd documents");
-  EXPECT_EQ(file_system_->getCurrent()->getName(), "documents");
+  shell.parseInputAndExecuteCmd(*fs_, "cd");
+  shell.parseInputAndExecuteCmd(*fs_, "mkdir tmp");
+  shell.parseInputAndExecuteCmd(*fs_, "cd tmp");
+  EXPECT_EQ(fs_->getCurrent()->getName(), "tmp");
+  EXPECT_EQ(getStdout(shell, *fs_, "mkdir"), "mkdir: missing operand\n");
+  shell.parseInputAndExecuteCmd(*fs_, "cd");
+  EXPECT_EQ(getStdout(shell, *fs_, "mkdir tmp"),
+            "mkdir: cannot create directory tmp : File/dir exists\n");
 }
 
-/*TEST_F(ShellTest, mkdirCmdThrowsRuntimeError) {
+TEST_F(ShellTest, rmdirCmd) {
   Shell shell;
-  shell.parseInputAndExecuteCmd(*file_system_, "cd");
-  EXPECT_THROW(shell.parseInputAndExecuteCmd(*file_system_, "mkdir home"),
-               std::runtime_error);
-}*/
-
-/*TEST_F(ShellTest, mkdirCmdThrowsInvalidArgument) {
-  Shell shell;
-  EXPECT_THROW(shell.parseInputAndExecuteCmd(*file_system_, "mkdir"),
-               std::invalid_argument);
-}*/
-
-/*TEST_F(ShellTest, rmdirCmd) {
-  Shell shell;
-  shell.parseInputAndExecuteCmd(*file_system_, "cd");
-  shell.parseInputAndExecuteCmd(*file_system_, "mkdir tmp");
-  shell.parseInputAndExecuteCmd(*file_system_, "cd tmp");
-  shell.parseInputAndExecuteCmd(*file_system_, "mkdir l1_testfolder1");
-  shell.parseInputAndExecuteCmd(*file_system_, "mkdir l1_testfolder2");
-  shell.parseInputAndExecuteCmd(*file_system_, "cd l1_testfolder1");
-  shell.parseInputAndExecuteCmd(*file_system_, "mkdir l2_testfolder1");
-  shell.parseInputAndExecuteCmd(*file_system_, "cd");
-  shell.parseInputAndExecuteCmd(*file_system_, "rmdir tmp");
-  EXPECT_THROW(shell.parseInputAndExecuteCmd(*file_system_, "dir tmp"),
-               std::range_error);
-}
-
-TEST_F(ShellTest, rmdirCmdThrowsInvalidArgument) {
-  Shell shell;
-  EXPECT_THROW(shell.parseInputAndExecuteCmd(*file_system_, "rmdir"),
-               std::invalid_argument);
-}
-
-TEST_F(ShellTest, rmCmdThrowsRangeError) {
-  Shell shell;
-  EXPECT_THROW(shell.parseInputAndExecuteCmd(*file_system_, "rmdir blah"),
-               std::range_error);
-}
-*/
-TEST_F(ShellTest, getElement) {
-  Shell shell;
-  EXPECT_EQ(file_system_->getElement("/home/d.txt")->getName(), "d.txt");
-  EXPECT_EQ(file_system_->getElement("/home/")->getName(), "home");
-  EXPECT_EQ(file_system_->getElement("/home/pictures")->getName(), "pictures");
-  EXPECT_EQ(file_system_->getElement("/home/../system/./a.txt")->getName(),
-            "a.txt");
-  EXPECT_EQ(file_system_->getElement("/home/d.text"), nullptr);
-  shell.parseInputAndExecuteCmd(*file_system_, "cd");
-  shell.parseInputAndExecuteCmd(*file_system_, "cd home");
-  EXPECT_EQ(file_system_->getElement("./pictures/e.png")->getName(), "e.png");
-  EXPECT_EQ(file_system_->getElement("../system/a.txt")->getName(), "a.txt");
-  EXPECT_EQ(file_system_->getElement("..")->getName(), "/");
-  EXPECT_EQ(file_system_->getElement(".")->getName(), "home");
+  shell.parseInputAndExecuteCmd(*fs_, "cd");
+  shell.parseInputAndExecuteCmd(*fs_, "rmdir tmp");
+  EXPECT_EQ(getStdout(shell, *fs_, "rmdir tmp"),
+            "rmdir: failed to remove tmp : No such file or directory\n");
+  EXPECT_EQ(getStdout(shell, *fs_, "rmdir"), "rmdir: missing operand\n");
+  shell.parseInputAndExecuteCmd(*fs_, "cd home");
+  EXPECT_EQ(getStdout(shell, *fs_, "rmdir d.txt"),
+            "rmdir: failed to remove d.txt : Not a directory\n");
 }
 
 TEST_F(ShellTest, lnCmd) {
   Shell shell;
-  shell.parseInputAndExecuteCmd(*file_system_, "cd");
-  shell.parseInputAndExecuteCmd(*file_system_, "cd home");
-  shell.parseInputAndExecuteCmd(*file_system_, "ln /home/pictures/e.png e");
-  // shell.parseInputAndExecuteCmd(*file_system_, "dir");
-  EXPECT_EQ(file_system_->getElement("/home/e")->getName(), "e");
+  shell.parseInputAndExecuteCmd(*fs_, "cd");
+  shell.parseInputAndExecuteCmd(*fs_, "mkdir tmp");
+  shell.parseInputAndExecuteCmd(*fs_, "cd /tmp");
+  shell.parseInputAndExecuteCmd(*fs_, "ln /home/pictures/e.png e");
+  EXPECT_EQ(fs_->getElement("/tmp/e")->getName(), "e");
+  EXPECT_EQ(getStdout(shell, *fs_, "ln"), "ln: missing operand\n");
+  EXPECT_EQ(getStdout(shell, *fs_, "ln blah"), "ln: invalid input arguments\n");
+  EXPECT_EQ(getStdout(shell, *fs_, "ln /home/uv w"),
+            "ln: cannot create link w : Target /home/uv not found\n");
+  EXPECT_EQ(getStdout(shell, *fs_, "ln /home/pictures/e.png e"),
+            "ln: cannot create link e : File/Dir exists\n");
 }
 
 TEST_F(ShellTest, mvCmd) {
   Shell shell;
-  shell.parseInputAndExecuteCmd(*file_system_, "cd");
-  shell.parseInputAndExecuteCmd(*file_system_, "cd home");
-  shell.parseInputAndExecuteCmd(*file_system_, "mv /home/pictures/e.png .");
-  // shell.parseInputAndExecuteCmd(*file_system_, "dir");
-  EXPECT_EQ(file_system_->getElement("/home/e.png")->getName(), "e.png");
+  shell.parseInputAndExecuteCmd(*fs_, "mv /home/pictures/e.png /tmp");
+  EXPECT_EQ(fs_->getElement("/tmp/e.png")->getName(), "e.png");
+  EXPECT_EQ(getStdout(shell, *fs_, "mv"), "mv: missing operand\n");
+  EXPECT_EQ(getStdout(shell, *fs_, "mv blah"), "mv: invalid input arguments\n");
+  EXPECT_EQ(getStdout(shell, *fs_, "mv /home/d.txt /bla"),
+            "mv: cannot move /bla : dest dir not found\n");
+  EXPECT_EQ(getStdout(shell, *fs_, "mv /home/d.txt /tmp/e.png"),
+            "mv: cannot move /tmp/e.png : dest path is non directory\n");
+  EXPECT_EQ(getStdout(shell, *fs_, "mv bla /tmp"),
+            "mv: cannot move bla : Src file/dir not found\n");
+  shell.parseInputAndExecuteCmd(*fs_, "mv /tmp/e.png /home/pictures");
 }
 
 TEST_F(ShellTest, cpCmd) {
   Shell shell;
-  shell.parseInputAndExecuteCmd(*file_system_,
-                                "cp /home/pictures/e.png /system");
-  EXPECT_EQ(file_system_->getElement("/system/e.png")->getName(), "e.png");
-  shell.parseInputAndExecuteCmd(*file_system_, "cp /home/pictures /system");
-  EXPECT_EQ(file_system_->getElement("/system/pictures/e.png")->getName(),
-            "e.png");
+  shell.parseInputAndExecuteCmd(*fs_, "cp /home/pictures/e.png /tmp");
+  EXPECT_EQ(fs_->getElement("/tmp/e.png")->getName(), "e.png");
+  shell.parseInputAndExecuteCmd(*fs_, "cp /home/pictures /tmp");
+  EXPECT_EQ(fs_->getElement("/tmp/pictures/e.png")->getName(), "e.png");
+  EXPECT_EQ(getStdout(shell, *fs_, "cp"), "cp: missing operand\n");
+  EXPECT_EQ(getStdout(shell, *fs_, "cp blah"), "cp: invalid input arguments\n");
+  EXPECT_EQ(getStdout(shell, *fs_, "cp /home/d.txt /bla"),
+            "cp: cannot copy to /bla : dest dir not found\n");
+  EXPECT_EQ(getStdout(shell, *fs_, "cp /home/d.txt /tmp/e.png"),
+            "cp: cannot copy to /tmp/e.png : dest path is non directory\n");
+  EXPECT_EQ(getStdout(shell, *fs_, "cp bla /tmp"),
+            "cp: cannot copy bla : Src file/dir not found\n");
 }
 
 TEST_F(ShellTest, chownCmd) {
-  Shell shell;
-  shell.parseInputAndExecuteCmd(*file_system_, "chown user /system/a.txt");
-  EXPECT_EQ(file_system_->getElement("/system/a.txt")->getOwner(), "user");
+  //  Shell shell;
+  shell_.parseInputAndExecuteCmd(*fs_, "chown newuser /tmp");
+  EXPECT_EQ(fs_->getElement("/tmp")->getOwner(), "newuser");
+  EXPECT_EQ(getStdout(shell_, *fs_, "chown"), "chown: missing operand\n");
+  EXPECT_EQ(getStdout(shell_, *fs_, "chown /tmp"),
+            "chown: invalid input arguments\n");
+  EXPECT_EQ(getStdout(shell_, *fs_, "chown user /bla"),
+            "chown: /bla : file/dir not found\n");
 }
 
 TEST_F(ShellTest, redoCmd) {
-  Shell shell;
-  shell.parseInputAndExecuteCmd(*file_system_, "cd");
-  std::stringstream buffer;
-  std::streambuf* sbuf = std::cout.rdbuf();
-  std::cout.rdbuf(buffer.rdbuf());
-  shell.parseInputAndExecuteCmd(*file_system_, "dir system");
-
-  std::string output = buffer.str();
-  buffer.str("");
-  buffer.clear();
-
-  shell.parseInputAndExecuteCmd(*file_system_, "redo");
-  EXPECT_EQ(output, buffer.str());
-
-  std::cout.rdbuf(sbuf);
+  //  Shell shell;
+  EXPECT_EQ(getStdout(shell_, *fs_, "redo"),
+            "chown: /bla : file/dir not found\n");
 }
 
 TEST_F(ShellTest, sortCmd) {
   Shell shell;
-  std::stringstream buffer;
-  std::streambuf* sbuf = std::cout.rdbuf();
-  std::cout.rdbuf(buffer.rdbuf());
-  shell.parseInputAndExecuteCmd(*file_system_, "cd");
-  shell.parseInputAndExecuteCmd(*file_system_, "sort");
-  std::string sorted = buffer.str();
-  buffer.str("");
-  buffer.clear();
-  shell.parseInputAndExecuteCmd(*file_system_, "sort reverse");
-  std::string rev_sorted = buffer.str();
-  buffer.str("");
-  buffer.clear();
-  shell.parseInputAndExecuteCmd(*file_system_, "cp /home/d.txt /system/");
-  shell.parseInputAndExecuteCmd(*file_system_, "sort time");
-  std::string time_sorted = buffer.str();
-  std::cout.rdbuf(sbuf);
-  EXPECT_EQ(sorted, "home\nsystem\n");
-  EXPECT_EQ(rev_sorted, "system\nhome\n");
 
-  EXPECT_EQ(time_sorted, "home\nsystem\n");
+  shell.parseInputAndExecuteCmd(*fs_, "cd");
+  EXPECT_EQ(getStdout(shell_, *fs_, "sort"), "home\nsystem\ntmp\n");
+  EXPECT_EQ(getStdout(shell_, *fs_, "sort reverse"), "tmp\nsystem\nhome\n");
+  sleep(1);
+  shell.parseInputAndExecuteCmd(*fs_, "cp /home /system/");
+  EXPECT_EQ(getStdout(shell_, *fs_, "sort time"), "home\ntmp\nsystem\n");
+  shell.parseInputAndExecuteCmd(*fs_, "cd /system");
+  shell.parseInputAndExecuteCmd(*fs_, "rmdir home");
 }
 
 }  // end of namespace unnamed

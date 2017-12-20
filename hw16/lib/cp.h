@@ -107,17 +107,17 @@ class Cp : public Command {
     auto src_fs_element = fs_->getElement(src_path);
     if (nullptr == src_fs_element) {
       throw std::runtime_error("cp: cannot copy " + src_path +
-                               ": Src file/dir not found");
+                               " : Src file/dir not found");
     }
     auto dst_fs_element = fs_->getElement(dst_dir_path);
     if (nullptr == dst_fs_element) {
-      throw std::runtime_error("cp: cannot copy " + dst_dir_path +
-                               ": dest dir not found");
+      throw std::runtime_error("cp: cannot copy to " + dst_dir_path +
+                               " : dest dir not found");
     }
 
     if (dst_fs_element->isFile()) {
-      throw std::runtime_error("cp: cannot copy " + dst_dir_path +
-                               ": destination path is a file");
+      throw std::runtime_error("cp: cannot copy to " + dst_dir_path +
+                               " : dest path is non directory");
     }
 
     auto dst_dir_element = std::dynamic_pointer_cast<Directory>(dst_fs_element);

@@ -47,18 +47,18 @@ class Mv : public Command {
     auto src_fs_element = fs_->getElement(src_path);
     if (nullptr == src_fs_element) {
       throw std::runtime_error("mv: cannot move " + src_path +
-                               ": Src file/dir not found");
+                               " : Src file/dir not found");
     }
 
     auto dst_fs_element = fs_->getElement(dst_dir_path);
     if (nullptr == dst_fs_element) {
       throw std::runtime_error("mv: cannot move " + dst_dir_path +
-                               ": dest dir not found");
+                               " : dest dir not found");
     }
 
     if (dst_fs_element->isFile()) {
       throw std::runtime_error("mv: cannot move " + dst_dir_path +
-                               ": destination path is a file");
+                               " : dest path is non directory");
     }
 
     auto dst_dir_element = std::dynamic_pointer_cast<Directory>(dst_fs_element);

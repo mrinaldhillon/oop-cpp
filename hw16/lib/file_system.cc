@@ -3,8 +3,12 @@
 #include <cassert>
 #include <experimental/filesystem>
 #include <iostream>
+#include <tuple>
 #include <vector>
 #include "lib/alphabetical_comparator.h"
+#include "lib/counting_visitor.h"
+#include "lib/file_search_visitor.h"
+#include "lib/size_counting_visitor.h"
 
 namespace std_exp_fs = std::experimental::filesystem;
 
@@ -122,6 +126,36 @@ int FileSystem::getInsertionLocation(const Directory& parent,
     index++;
   }
   return index;
+}
+
+std::tuple<int, int, int> FileSystem::countDirsFilesLinks(
+    Directory& dir) const {
+  CountingVisitor v;
+  dir.accept(v);
+  return std::make_tuple(v.getDirNum(), v.getFileNum(), v.getLinkNum());
+}
+std::tuple<int, int, int> FileSystem::countDirsFilesLinks() const {
+  return countDirsFilesLinks(*current_);
+}
+
+unsigned int FileSystem::getDiskUtil(FSElement& element) const {
+  SizeCountingVisitor v;
+  element.accept(v);
+  return v.getTotalSize();
+}
+
+unsigned int FileSystem::getDiskUtil() const { return getDiskUtil(*current_); }
+
+const std::vector<std::shared_ptr<File>> FileSystem::searchFileTypes(
+    Directory& dir, const std::string& extension) const {
+  FileSearchVisitor v(extension);
+  dir.accept(v);
+  return v.getFoundFiles();
+}
+
+const std::vector<std::shared_ptr<File>> FileSystem::searchFileTypes(
+    const std::string& extension) const {
+  return searchFileTypes(*current_, extension);
 }
 
 }  // end of namespace fs

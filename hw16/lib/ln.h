@@ -42,16 +42,17 @@ class Ln : public Command {
     }
 
     auto link_name = options.back();
-    std::shared_ptr<FSElement> target_fs_element =
-        fs_->getElement(options.front());
+    auto target_path = options.front();
+
+    std::shared_ptr<FSElement> target_fs_element = fs_->getElement(target_path);
     if (nullptr == target_fs_element) {
       throw std::runtime_error("ln: cannot create link " + link_name +
-                               ": Target not found \n");
+                               " : Target " + target_path + " not found");
     }
 
     if (nullptr != fs_->getElement(link_name)) {
       throw std::runtime_error("ln: cannot create link " + link_name +
-                               ": File/Dir exists\n");
+                               " : File/Dir exists");
     }
 
     auto current = fs_->getCurrent();

@@ -13,16 +13,6 @@ class Cd : public Command {
   const std::string name_ = "cd";
   std::string options_;
 
-  void iterate(Directory& element) {
-    std::shared_ptr<Directory> dir;
-    if (dir = element.getParent().lock()) {
-      iterate(*dir);
-      std::cout << element.getName() << "/";
-    } else {
-      std::cout << element.getName();
-    }
-  }
-
  public:
   Cd(FileSystem& fs, const std::string& options)
       : fs_(&fs), options_(options) {}
@@ -38,27 +28,22 @@ class Cd : public Command {
 
   void execute() {
     auto current = fs_->getCurrent();
-    std::string dir_name = options_;
 
-    if (dir_name.empty()) {  // cd
+    if (options_.empty()) {  // cd
       fs_->setCurrent(fs_->getRoot());
-    } else if (dir_name == "..") {  // cd ..
-      if (current->getName() != "/")
-        if (auto parent = current->getParent().lock()) {
-          fs_->setCurrent(parent);
-        }
-    } else {
-      for (auto child : fs_->getChildren()) {
-        if (child->getName() == dir_name) {
-          if (child->isFile())
-            throw std::runtime_error("cd: " + dir_name + ": Not a directory\n");
-          fs_->setCurrent(std::dynamic_pointer_cast<Directory>(child));
-          return;
-        }
-      }
-      throw std::out_of_range("cd: " + options_ +
-                              "No such file or directory\n");
+      return;
     }
+
+    auto target_dir = fs_->getElement(options_);
+    if (nullptr == target_dir) {
+      throw std::range_error("cd: " + options_ + " : dir not found");
+    }
+
+    if (target_dir->isFile()) {
+      throw std::runtime_error("cd: " + options_ + " : target is non directory");
+    }
+
+    fs_->setCurrent(std::dynamic_pointer_cast<Directory>(target_dir));
   }
 };
 

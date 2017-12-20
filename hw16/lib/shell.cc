@@ -3,8 +3,10 @@
 #include "lib/cd.h"
 #include "lib/chown.h"
 #include "lib/command_history.h"
+#include "lib/count.h"
 #include "lib/cp.h"
 #include "lib/dir.h"
+#include "lib/du.h"
 #include "lib/history.h"
 #include "lib/ln.h"
 #include "lib/ls.h"
@@ -13,6 +15,7 @@
 #include "lib/pwd.h"
 #include "lib/redo.h"
 #include "lib/rmdir.h"
+#include "lib/search.h"
 #include "lib/sort.h"
 
 namespace fs {
@@ -29,7 +32,7 @@ void Shell::parseInputAndExecuteCmd(FileSystem& fs, const std::string& input) {
     if (app == "pwd") {
       cmd = std::make_unique<Pwd>(fs);
     } else if (app == "ls") {
-      cmd = std::make_unique<Ls>(fs);
+      cmd = std::make_unique<Ls>(fs, options);
     } else if (app == "history") {
       cmd = std::make_unique<History>(cmd_history_);
     } else if (app == "cd") {
@@ -52,14 +55,22 @@ void Shell::parseInputAndExecuteCmd(FileSystem& fs, const std::string& input) {
       cmd = std::make_unique<Redo>(cmd_history_);
     } else if (app == "sort") {
       cmd = std::make_unique<Sort>(fs, options);
+    } else if (app == "count") {
+      cmd = std::make_unique<Count>(fs, options);
+    } else if (app == "search") {
+      cmd = std::make_unique<Search>(fs, options);
+    } else if (app == "du") {
+      cmd = std::make_unique<Du>(fs, options);
     } else if (app == "exit") {
       exit(0);
     } else {
       std::cout << app << ": command not found..." << std::endl;
     }
 
-    if (nullptr != cmd) cmd->execute();
-    cmd_history_.push(std::move(cmd));
+    if (nullptr != cmd) {
+      cmd->execute();
+      cmd_history_.push(std::move(cmd));
+    }
   } catch (const std::runtime_error& e) {
     std::cout << e.what() << std::endl;
     cmd_history_.push(std::move(cmd));

@@ -24,8 +24,10 @@ void File::accept(FSVisitor& v) { v.visit(shared_from_this()); }
 unsigned int File::getDiskUtil() const { return size_; }
 
 std::string File::getInfo() const {
+  auto mod_time = getModTime();
   std::ostringstream oss;
-  oss << "file\t" << getSize() << "\t" << getOwner() << "\t" << getName();
+  oss << "file\t" << getOwner() << "\t" << getSize() << "\t"
+      << std::asctime(std::localtime(&mod_time)) << "\t" << getName();
   return oss.str();
 }
 

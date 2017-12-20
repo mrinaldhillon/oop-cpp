@@ -36,14 +36,14 @@ class Rmdir : public Command {
         if (!child->isFile()) {
           current->rmChild(dir_name);
         } else {
-          throw std::runtime_error("rmdir: failed to remove" + dir_name +
-                                   ": Not a directory");
+          throw std::runtime_error("rmdir: failed to remove " + dir_name +
+                                   " : Not a directory");
         }
         return;
       }
     }
-    throw std::range_error("rmdir: failed to remove" + dir_name +
-                           ": No such file or directory");
+    throw std::range_error("rmdir: failed to remove " + dir_name +
+                           " : No such file or directory");
   }
 };
 

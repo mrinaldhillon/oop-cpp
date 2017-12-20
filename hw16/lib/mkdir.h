@@ -9,12 +9,12 @@ namespace fs {
 
 class Mkdir : public Command {
  private:
-  const FileSystem* fs_;
+  FileSystem* fs_;
   const std::string name_ = "mkdir";
   std::string options_;
 
  public:
-  Mkdir(const FileSystem& fs, const std::string& options)
+  Mkdir(FileSystem& fs, const std::string& options)
       : fs_(&fs), options_(options) {}
   Mkdir(const Mkdir& rhs) : fs_(rhs.fs_), options_(rhs.options_) {}
   Mkdir& operator=(const Mkdir& rhs) {
@@ -29,15 +29,14 @@ class Mkdir : public Command {
   void execute() {
     std::string dir_name = options_;
     auto current = fs_->getCurrent();
-    if (dir_name.empty())
-      throw std::invalid_argument("mkdir: missing operand\n");
+    if (dir_name.empty()) throw std::invalid_argument("mkdir: missing operand");
 
     for (auto child : current->getChildren()) {
       if (child->getName() == dir_name)
-        throw std::runtime_error("mkdir:cannot create directory " + dir_name +
-                                 ": File exists\n");
+        throw std::runtime_error("mkdir: cannot create directory " + dir_name +
+                                 " : File/dir exists");
     }
-    current->appendChild(
+    fs_->addChild(
         std::make_shared<Directory>(current, dir_name, current->getOwner()));
   }
 };

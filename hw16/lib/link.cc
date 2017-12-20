@@ -23,11 +23,17 @@ void Link::accept(FSVisitor& v) { v.visit(shared_from_this()); }
 
 unsigned int Link::getDiskUtil() const { return size_; }
 std::string Link::getInfo() const {
-  // if (auto target = target_.lock()
-  //	std::string tareget path= target->getPath(from);
-  //	TODO: implement get path relative from
+  //	TODO: implement get path to get target's absolute path
   std::ostringstream oss;
-  oss << "link\t" << getSize() << "\t" << getOwner() << "\t" << getName();
+
+  if (auto target = target_.lock()) {
+    oss << "link\t" << getName() << " -> " << target->getInfo();
+  } else {
+    auto mod_time = getModTime();
+    oss << "link\t" << getOwner() << "\t" << getSize() << "\t"
+        << std::asctime(std::localtime(&mod_time)) << "\t" << getName()
+        << " -> ";
+  }
   return oss.str();
 }
 

@@ -10,17 +10,6 @@ Directory::Directory(const std::shared_ptr<Directory>& parent,
   size_ = 0;
 }
 
-/*Directory::Directory(const Directory& rhs) : FSElement(rhs.parent_, rhs.name_,
-rhs.owner_), children_{} {
-        size_ = rhs.size_;
-        for (auto rhs.child : rhs->getChildren()) {
-                auto lhs = std::make_shared()
-
-        }
-
-}
-//  Directory& operator=(const Directory& rhs);
-*/
 const std::vector<std::shared_ptr<FSElement>> Directory::getChildren() const {
   return children_;
 }
@@ -66,7 +55,9 @@ void Directory::addChild(std::shared_ptr<FSElement> child, int index) {
 
 std::string Directory::getInfo() const {
   std::ostringstream oss;
-  oss << "directory\t" << getSize() << "\t" << getOwner() << "\t" << getName();
+  std::time_t mod_time = getModTime();
+  oss << "directory\t" << getOwner() << "\t" << getSize() << "\t"
+      << std::asctime(std::localtime(&mod_time)) << "\t" << getName();
   return oss.str();
 }
 
