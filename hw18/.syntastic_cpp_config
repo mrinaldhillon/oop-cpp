@@ -1,0 +1,7 @@
+-L /home/mrinal/Developer/googletest/bazel-bin
+-lgtest
+-lgtest_main
+-I /home/mrinal/Developer/googletest/googletest/include
+-I /home/mrinal/Developer/googletest/googlemock/include
+-I third_party/GSL/include
+-std=c++14
