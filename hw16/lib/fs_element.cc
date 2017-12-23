@@ -14,7 +14,7 @@ FSElement::FSElement(const std::shared_ptr<Directory>& parent,
       size_(0) {
   if (nullptr == parent)
     assert(name == "/");  // TBD: should these be runtime exception?
-};
+}
 
 std::weak_ptr<Directory> FSElement::getParent() const { return parent_; }
 void FSElement::setParent(const std::shared_ptr<Directory>& parent) {

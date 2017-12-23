@@ -16,7 +16,7 @@ namespace fs {
 
 FileSystem::FileSystem()
     : root_(std::make_shared<Directory>(nullptr, "/", "root")),
-      current_(root_){};
+      current_(root_){}
 
 void FileSystem::showAllChildrenRecursive(
     const std::string& dir_path,
