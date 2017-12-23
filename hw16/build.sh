@@ -3,14 +3,14 @@
 [ ! -f "../.bashrc" ] && echo "Building in incorrect path" && exit 1
 source "../.bashrc"  
 
-DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-HW_NAME="$( basename "${DIR}")"
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+HW_NAME="$( basename "${SCRIPT_DIR}")"
 BUILD_PARAMS=--collect_code_coverage
-COVERAGE_DIR="${DIR}/bazel-testlogs/coverage"
+COVERAGE_DIR="${SCRIPT_DIR}/bazel-testlogs/coverage"
 COVERAGE_FILE="lcov-coverage.info"
 COVERAGE_FILE_PATH="${COVERAGE_DIR}/${COVERAGE_FILE}"
-BZL_BIN_DIR="${DIR}/bazel-bin"
-BZL_TESTLOGS_DIR="${DIR}/bazel-testlogs"
+BZL_BIN_DIR="${SCRIPT_DIR}/bazel-bin"
+BZL_TESTLOGS_DIR="${SCRIPT_DIR}/bazel-testlogs"
 BZL_TEST_DIR="${BZL_BIN_DIR}/test"
 HELP_TEXT="bash build.sh | bash build.sh clean"
 USER="${USER}"
