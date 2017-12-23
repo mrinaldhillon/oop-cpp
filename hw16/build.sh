@@ -4,6 +4,7 @@
 source "../.bashrc"  
 
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
 HW_NAME="$( basename "${SCRIPT_DIR}")"
 BUILD_PARAMS=--collect_code_coverage
 COVERAGE_DIR="${SCRIPT_DIR}/bazel-testlogs/coverage"

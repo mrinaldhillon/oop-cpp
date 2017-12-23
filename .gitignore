@@ -37,3 +37,6 @@ bazel-*
 diff
 log
 *.swp
+_bazel*
+tools/*
+.bashrc

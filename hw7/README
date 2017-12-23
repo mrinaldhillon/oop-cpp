@@ -1,0 +1,3 @@
+* I have used gcc compile flags -Wall, -Wextra, -Weffc++
+*	to provide sufficient warnings to avoid bugs and enforce best practices.
+* Each test runs Valgrind to check for memory leaks.

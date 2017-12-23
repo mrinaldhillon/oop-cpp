@@ -172,6 +172,7 @@ function compile () {
 if [ ! -z "$1" ]; then
 	if [ $1 = "clean" ]; then
 		rm -rf "${TOOLS_DIR}" && exit 0
+		rm -rf "${SCRIPT_DIR}/_bazel_${USER}"
 	else
 		[ $1 = "help" ] && echo "${HELP_TEXT}" && exit 1
 	fi

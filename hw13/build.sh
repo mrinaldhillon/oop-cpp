@@ -1,34 +1,69 @@
-#!/bin/sh
+#!/usr/bin/env bash
 
-uname -a | grep Linux >> /dev/null
-[ $? -ne 0 ] && echo "Only linux supported for now" && exit 1
+[ ! -f "../.bashrc" ] && echo "Building in incorrect path" && exit 1
+source "../.bashrc"  
 
-which bazel >> /dev/null
-[ $? -ne 0 ] && echo "Please install bazel build system" && exit 1
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
-
-PROJECT_HOME=`pwd`
-BIN_TARGET=file-system-test
-BUILD_TEST=test:${BIN_TARGET}
+HW_NAME="$( basename "${SCRIPT_DIR}")"
 BUILD_PARAMS=--collect_code_coverage
-COVERAGE_DIR=${PROJECT_HOME}/bazel-testlogs/test/${BIN_TARGET}
-COVERAGE_FILE=lcov-coverage.info
-COVERAGE_FILE_PATH=${COVERAGE_DIR}/${COVERAGE_FILE}
-COVERAGE_EXCLUDE_LIST="'/usr/*' '${HOME}/.cache/bazel/*/*/execroot/__main__/external/*'"
-RUN_UNDER=`which valgrind`
+COVERAGE_DIR="${SCRIPT_DIR}/bazel-testlogs/coverage"
+COVERAGE_FILE="lcov-coverage.info"
+COVERAGE_FILE_PATH="${COVERAGE_DIR}/${COVERAGE_FILE}"
+BZL_BIN_DIR="${SCRIPT_DIR}/bazel-bin"
+BZL_TESTLOGS_DIR="${SCRIPT_DIR}/bazel-testlogs"
+BZL_TEST_DIR="${BZL_BIN_DIR}/test"
+HELP_TEXT="bash build.sh | bash build.sh clean"
+USER="${USER}"
+function bazel_build ()
+{
+	"${BZL_BIN}" clean
+	"${BZL_BIN}" build //... "${BUILD_PARAMS}"
+	[ $? -ne 0 ] && return 1
+	return 0
+}
 
-bazel clean
-bazel build ${BUILD_TEST} ${BUILD_PARAMS}
-[ $? -ne 0 ] && echo "Build Failed" && exit 1
+function run_test ()
+{
+	"${VALGRIND_BIN}" "${BZL_TEST_DIR}"/*-test
+	[ $? -ne 0 ] && return 1
+	return 0
+}
 
-${RUN_UNDER} ./bazel-bin/test/${BIN_TARGET}
+function code_coverage ()
+{
+	if [ -z "${LCOV_BIN}" ]; then
+		echo "Code coverage generation requires 'lcov' and 'genhtml' linux utilities installed"
+		return 0
+	fi
+	cd "${BZL_BIN_DIR}"
+	mkdir "${COVERAGE_DIR}"
+	"${LCOV_BIN}" -q --directory lib --directory test --capture --output-file "${COVERAGE_FILE_PATH}"
+	"${LCOV_BIN}" -q --remove "${COVERAGE_FILE_PATH}" '/usr/*' \
+		"${TEST_TMPDIR}"'/_bazel_'"${USER}"'/*/execroot/__main__/external/*' \
+		-o "${COVERAGE_FILE_PATH}"
+	"${GENHTML_BIN}" "${COVERAGE_FILE_PATH}" -o "${COVERAGE_DIR}"
+	echo "Code coverage generated at ${COVERAGE_DIR}"
+	return 0
+}
 
-which lcov >> /dev/null && which genhtml >> /dev/null
-if [ $? -eq 0 ]; then
-	cd bazel-bin
-	lcov -q --directory lib --directory test --capture --output-file ${COVERAGE_FILE_PATH}
-	lcov -q --remove ${COVERAGE_FILE_PATH} '/usr/*' ${HOME}'/.cache/bazel/*/*/execroot/__main__/external/*' -o ${COVERAGE_FILE_PATH}
-	genhtml ${COVERAGE_FILE_PATH} -o ${COVERAGE_DIR}
-else
-	echo "Code coverage generation requires 'lcov' and 'genhtml' linux utilities installed"
+
+function build ()
+{
+	bazel_build
+	[ $? -ne 0 ] && exit 1
+	run_test
+	[ $? -ne 0 ] && exit 1
+	code_coverage
+	exit 0
+}
+
+if [ ! -z "$1" ]; then
+	if [ $1 = "clean" ]; then
+		"${BZL_BIN}" clean && exit 0
+	else
+		[ $1 = "help" ] && echo "${HELP_TEXT}" && exit 1
+	fi
+else 
+	build
 fi
