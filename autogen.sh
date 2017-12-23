@@ -44,6 +44,22 @@ GENHTML_BIN="${LCOV_DIR}/bin/genhtml"
 BASH_RC="${SCRIPT_DIR}/.bashrc"
 HELP_TEXT="bash autogen.sh | bash autogen.sh clean"
 
+function rm_dir()
+{
+	if [ -z "${SCRIPT_DIR}" ] || [ ! -d "${SCRIPT_DIR}" ]; then
+		echo "Where am I?.. ${SCRIPT_DIR} ..bugging out!!" && return 1
+	fi
+	if [ -z "$@" ] || [ ! -d "$@" ]; then
+		echo "Directory $@ for removal does not exist BUGGIN OUT!!" && return 1
+	fi
+	TARGET_DIR="$@"
+	if [[ "${TARGET_DIR}" != "${SCRIPT_DIR}"* ]]; then
+		echo "This script remove path only under ${SCRIPT_DIR}"
+		return 1
+	fi
+	rm -rf "${TARGET_DIR}" && return 0
+}
+
 function setup_bash_rc ()
 {
 	echo "export BZL_BIN=${BZL_BIN}" > "${BASH_RC}"
@@ -171,12 +187,12 @@ function compile () {
 
 if [ ! -z "$1" ]; then
 	if [ $1 = "clean" ]; then
-		rm -rf "${TOOLS_DIR}" && exit 0
-		rm -rf "${SCRIPT_DIR}/_bazel_${USER}"
+		rm_dir "${TOOLS_DIR}"
+		rm_dir "${SCRIPT_DIR}/_bazel_${USER}"
 	else
 		[ $1 = "help" ] && echo "${HELP_TEXT}" && exit 1
 	fi
 else 
 	compile
-	exit $?
 fi
+exit $?
