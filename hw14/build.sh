@@ -1,3 +1,3 @@
 #!/usr/bin/env bash
 
-cat ./README
+[ "$#" -ne 1 ] && cat ./README
