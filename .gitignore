@@ -32,3 +32,11 @@
 *.app
 
 tags
+vgcore.*
+bazel-*
+diff
+log
+*.swp
+_bazel*
+tools/*
+.bashrc

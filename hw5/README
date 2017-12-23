@@ -1,0 +1,4 @@
+* hw5 requires basic implementation of unit testing using googletest and matchers using googlemock
+*	This assignment is based hw2 polygon.
+* Modifications since hw2: Encapsulated point, polygon, rectangle and triangle in namespace polygon.
+* 	Implemented == operator for Point class, required for test cases.

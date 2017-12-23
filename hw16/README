@@ -1,0 +1,5 @@
+* HW16 built upton hw15 filesystem
+* Added shell apps
+* Compile:
+*	bash build.sh
+*	bash build.sh clean 

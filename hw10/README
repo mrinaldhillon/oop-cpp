@@ -1,0 +1,12 @@
+* HW10 FileCache with Singleton and Strategy design patterns.
+* Strategy is to be able to dynamically set cache replacement policy as fifo or lru.
+* At the moment only fifo is implemented.
+* FileCache and FIFO are Singleton classes.
+* fs::File is user defined class with dummy data set upon instantiation.
+
+* Build instruction:
+*	$ sh build.sh
+* Generated files:
+* 	Unit tests: bazel-bin/test/file-cache-test
+* 	Code coverage: bazel-testlogs/test/file-cache-test/index.html
+

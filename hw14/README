@@ -1,0 +1,7 @@
+* Initialize CompositeCommand object cCmd with formatting "AbstractHeader"
+* Initialize Command object to set font size FontSizeChange(string Npt)
+* Initialize Command object to set font name FontNameChange(string fontname)
+* Initialize Command object to set font style FontStyleChange(string fontstyle)
+* Initialize Command object to set font allignment FontAllignmentChange(string allignment)
+* Pass the created command objects to cCmd.setCommand(Command&)
+* Execute the Composite command cCmd.execute()

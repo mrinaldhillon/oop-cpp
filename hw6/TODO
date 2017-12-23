@@ -1,0 +1,4 @@
+* checking_account#withdrway is not MT safe,
+*	checking_account maintains shared_ptr of savings account.
+* 	This shared_ptr may be used by the account holder in a different thread.
+* TODO: work out a strategy to make access checking_account#savings_account_ MT Safe(think atomic).

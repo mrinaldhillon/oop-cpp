@@ -1,0 +1,5 @@
+* HW9 implements custom comparator for sorting car class as exercise in Strategy design.
+* Following new concepts learned:
+* 	Google test gmock matcher for Container comparision.
+*	using namespace std anywhere in code is bad practice.
+*	namespace best practices.

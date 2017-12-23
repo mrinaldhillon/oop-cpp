@@ -1,0 +1,4 @@
+* HW12 Implemented File System using Composite design pattern.
+* File and Directory are derived from FSElement abstact class
+* FileSystem is singleton type
+* Switched to Varient 1 based on notes.

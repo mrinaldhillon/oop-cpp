@@ -1,0 +1,4 @@
+* Build system bazel create libstudent.so but no corresponding header file is deployed.
+* Remove build directories prefix bazel-*.
+* Unit Test cases using gtest.
+* Update README

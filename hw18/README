@@ -1,0 +1,6 @@
+* HW18 FIFO FileCache with Template method
+* Build instruction:
+*	$ sh build.sh
+* Generated files:
+* 	Unit tests: bazel-bin/test/file-cache-test
+* 	Code coverage: bazel-testlogs/test/file-cache-test/index.html
