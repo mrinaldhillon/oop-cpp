@@ -18,6 +18,7 @@ Depenedencies:
 1. Bazel Build System:			Required!
 	- https://bazel.build/
 	- Package manager: https://docs.bazel.build/versions/master/install.html
+	- Dependencies: JDK 8, Python, bash, zip, tar, and the usual C/C++ build toolchain
 
 2. Valgrind : Memory leak checker	Optional
 	
@@ -49,3 +50,13 @@ Build Steps:
 
 - You may also run build.sh under hw# // requires current dir to be hw#
 				// sources ../.bashrc
+3. Source Directories:
+	- hw#/lib/
+	- hw#/test/
+	- hw#/main/
+4. Build Generated Directories
+	- hw#/bazel-bin/test/
+	- hw#/bazel-bin/main/
+	- hw#/bazel-bin/lib/
+	- hw#/bazel-testlogs/converage/
+	- hw#/bazel-testlogs/test/*/
